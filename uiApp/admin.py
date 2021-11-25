@@ -5,3 +5,4 @@ from uiApp.models import *
 
 admin.site.register(DB_href)
 admin.site.register(DB_end)
+admin.site.register(DB_cases)

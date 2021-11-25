@@ -16,12 +16,15 @@
 	        </div>
 	        <ul>
 	            <li class="nav-item">
-	                <a href="javascript:;"><i class="my-icon nav-icon icon_1"></i><span>网站配置</span><i class="my-icon nav-more"></i></a>
-	                <ul>
-                        {% for i in href %}
-                            <li><a href="{{ i.url }}"><span>{{ i.name }}</span</a></li>
-                        {% endfor %}
-	                </ul>
+	                <a href="javascript:;"><i class="my-icon nav-icon icon_1"></i><span>页面导航</span><i class="my-icon nav-more"></i></a>
+{#	                <ul>#}
+{#                        {% for i in href %}#}
+{#                            <li><a href="{{ i.url }}"><span>{{ i.name }}</span</a></li>#}
+{#                        {% endfor %}#}
+{#	                </ul>#}
+                    <ul>
+                        <li s><a href="/home/"><span>首页</span></a></li>
+                    </ul>
 	            </li>
 	            <li class="nav-item">
 	                <a href="javascript:;"><i class="my-icon nav-icon icon_2"></i><span>UI自动化管理</span><i class="my-icon nav-more"></i></a>

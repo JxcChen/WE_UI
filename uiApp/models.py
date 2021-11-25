@@ -26,6 +26,12 @@ class DB_end(models.Model):
 
 class DB_cases(models.Model):
     name = models.CharField(max_length=20, null=True, blank=True)
+    case_type = models.IntegerField(default=0, null=True, blank=True)
+    is_monitor = models.BooleanField(default=True, null=True, blank=True)
+    script = models.CharField(max_length=200, null=True, blank=True)
+    is_threads = models.BooleanField(default=True, null=True, blank=True)
+    pro_id = models.CharField(max_length=20, null=False, blank=False)
+    retry_count = models.IntegerField(default=2)
 
     def __str__(self):
         return self.name

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>case_list</title>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <h3 class="text-center">
+                    {{ project.name }}的测试用例
+                </h3>
+                <div align="right"><button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_case_form").style.display="block"'>添加用例</button></div>
+                <table class="table table-bordered">
+                    <thead style="background-color: lightskyblue">
+                        <tr>
+                            <th>
+                                编号
+                            </th>
+                            <th>
+                                名称
+                            </th>
+                            <th>
+                                是否监控
+                            </th>
+                            <th>
+                                是否并发
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for case in cases %}
+                            <tr class="error">
+                                <td>
+                                    {{ case.id }}
+                                </td>
+                                <td>
+                                    {{ case.name }}
+                                </td>
+                                <td>
+                                    {{ case.is_monitor }}
+                                </td>
+                                <td>
+                                    {{ case.is_threads }}
+                                </td>
+                                <td width="25%">
+                                    <button class="btn btn-sm btn-primary">执行</button> &nbsp
+                                    <button class="btn btn-sm btn-primary">编辑</button> &nbsp
+                                    <button class="btn btn-sm btn-primary">报告</button> &nbsp
+                                    <button type="button" class="btn btn-sm btn-danger">删除</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <form id="add_case_form" class="form-horizontal" role="form" style="width: 600px ;align-content: center;margin-left: 300px;display: none" >
+                    <div class="form-group">
+                         <label class="col-sm-2 control-label">用例名称</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="case_name" type="text" class="form-control" placeholder="用例名称" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用例类型</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="case_type" type="text" class="form-control" placeholder="用例类型" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">重试次数</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="retry_count" type="text" class="form-control" placeholder="重试次数" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label">是否监控</label>
+                        <div class="input-group">
+                            <label style="width: 100px;margin-left: 30px">
+                                <input type="radio" name="is_monitor_radio" value="True">
+                                <span style="font-size: medium">是</span>
+                            </label>
+                            <label style="width: 100px">
+                                <input type="radio"  name="is_monitor_radio" value="False">
+                                <span style="font-size: medium">否</span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label">是否并发</label>
+                        <div class="input-group">
+                            <label style="width: 100px;margin-left: 30px">
+                                <input type="radio"  name="is_threads_radio" value="True" >
+                                <span style="font-size: medium">是</span>
+                            </label>
+                            <label style="width: 100px">
+                                <input type="radio"  name="is_threads_radio" value="False">
+                                <span style="font-size: medium">否</span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                             <button onclick="add_case({{ project.id }})" type="submit" class="btn btn-default">确定</button>
+                            <button onclick="javascript:document.getElementById('add_case_form').style.display='none'" type="submit" class="btn btn-default">取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+    <script>
+        function add_case(pro_id) {
+            console.log("+++++++"+pro_id)
+            const case_name = document.getElementById("case_name").value;
+            const case_type = document.getElementById("case_type").value;
+            const retry_count = document.getElementById("retry_count").value;
+            const is_monitor = $(':radio[name="is_monitor_radio"]:checked').val();
+            const is_threads = $(':radio[name="is_threads_radio"]:checked').val()
+            $.get(
+                '/add_case/'+pro_id+'/',
+                {
+                    "case_name":case_name,
+                    "case_type":case_type,
+                    "retry_count":retry_count,
+                    "is_monitor":is_monitor,
+                    "is_threads":is_threads
+                },function (ret) {
+                    
+                }
+
+            )
+        }
+    </script>
+
+
+</body>
+</html>

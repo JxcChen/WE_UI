@@ -28,3 +28,25 @@ def del_end(request, del_id):
     return HttpResponseRedirect("/home/")
 
 
+def testcases(request, pro_id):
+    cases = DB_cases.objects.filter(pro_id=pro_id)
+    project = list(DB_end.objects.filter(id=pro_id))[0]
+    param = {"cases": cases, "project": project}
+    return render(request, 'case.html', param)
+
+
+def add_case(request, pro_id):
+    is_monitor = False
+    if request.GET['is_monitor'] == "True":
+        is_monitor = True
+
+    is_threads = False
+    if request.GET['is_monitor'] == "True":
+        is_monitor = True
+    print("===========" + pro_id)
+    DB_cases.objects.create(pro_id=pro_id, name=request.GET['case_name'], retry_count=request.GET['retry_count'],
+                            is_monitor=is_monitor, is_threads=is_threads, case_type=request.GET['case_type'])
+    cases = DB_cases.objects.filter(pro_id=pro_id)
+    project = list(DB_end.objects.filter(id=pro_id))[0]
+    param = {"cases": cases, "project": project}
+    return render(request, 'case.html', param)

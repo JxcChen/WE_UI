@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/',home),
     path('save_end/',save_end),
-    re_path('del_end/(?P<del_id>.+)/',del_end)
-    # path('testcases/(?P<del_id>.+)/',testcases)
+    re_path('del_end/(?P<del_id>.+)/',del_end),
+    re_path('testcases/(?P<pro_id>.+)/',testcases),
+    re_path('add_case/(?P<pro_id>.+)/',add_case)
 ]
