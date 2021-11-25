@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <table class="table table-bordered" align="center" style="width: 800px">
+       <caption style="text-align: center">平台目前已添加的项目</caption>
+       <thead>
+         <tr style="background-color: #cdd8e5">
+         <th>名字</th>
+         <th>首页网址</th>
+         <th>邮箱地址</th>
+             <th>操作</th>
+         </tr>
+       </thead>
+       <tbody>
+         {% for i in end %}
+         <tr>
+             <td><a href="/testcases/{{ i.id }}">{{ i.name }}</a></td>
+             <td>{{ i.host }}</td>
+             <td>{{ i.email }}</td>
+         <td><button onclick="delEnd({{ i.id }})">删除</button></td>
+         </tr>
+         {% endfor %}
+       </tbody>
+    </table>
+    <div id="add_end_input" style="display: none;width: 600px;margin: 0 auto">
+
+        <form class="form-horizontal" role="form" style="align-content: center">
+            <div class="form-group">
+                <label for="firstname" class="col-sm-2 control-label">项目名称</label>
+                <div class="col-sm-10">
+                    <input type="text" id="pro_name" placeholder="请输入项目名">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lastname" class="col-sm-2 control-label">页面首页</label>
+                <div class="col-sm-10">
+                    <input type="text" id="pro_host" placeholder="请输入页面首页地址">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lastname" class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-10">
+                    <input type="text" id="pro_email" placeholder="请输入邮箱地址">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button onclick="addEnd()">确定</button> &nbsp
+                    <button onclick='javascript=document.getElementById("add_end_input").style.display="none"'>取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div align="center"><button onclick='javascript=document.getElementById("add_end_input").style.display="block"'>添加项目</button></div>
+
+
+    <script>
+        function addEnd(){
+            const name = document.getElementById("pro_name").value;
+            const host = document.getElementById("pro_host").value;
+            const email = document.getElementById("pro_email").value;
+
+            $.get(
+                "/save_end/",  // 访问的路径
+                {'name':name,'host':host,'email':email}, //请求体
+                function (){
+                    document.location.reload();  // 重新加载页面
+                }
+            )
+        }
+        function delEnd(del_id){
+            $.get(
+                "/del_end/"+del_id+"/",
+                {},
+                function (){
+                    document.location.reload();
+                }
+            )
+        }
+    </script>
+</body>
+</html>
