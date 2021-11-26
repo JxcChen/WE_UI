@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
 </head>
+
 <body>
+
     {% include 'menu.html' %}
 
     <div class="container">
@@ -54,7 +56,7 @@
                                 </td>
                                 <td width="25%">
                                     <button class="btn btn-sm btn-primary">执行</button> &nbsp
-                                    <button class="btn btn-sm btn-primary">编辑</button> &nbsp
+                                    <button onclick="edit_case({{ case.id }})" class="btn btn-sm btn-primary">编辑</button> &nbsp
                                     <button class="btn btn-sm btn-primary">报告</button> &nbsp
                                     <button type="button" class="btn btn-sm btn-danger">删除</button>
                                 </td>
@@ -85,11 +87,11 @@
                         <label  class="col-sm-2 control-label">是否监控</label>
                         <div class="input-group">
                             <label style="width: 100px;margin-left: 30px">
-                                <input type="radio" name="is_monitor_radio" value="True">
+                                <input id="is_monitor_true" type="radio" name="is_monitor_radio" value="True">
                                 <span style="font-size: medium">是</span>
                             </label>
                             <label style="width: 100px">
-                                <input type="radio"  name="is_monitor_radio" value="False">
+                                <input id="is_monitor_false" type="radio"  name="is_monitor_radio" value="False">
                                 <span style="font-size: medium">否</span>
                             </label>
 
@@ -99,14 +101,20 @@
                         <label  class="col-sm-2 control-label">是否并发</label>
                         <div class="input-group">
                             <label style="width: 100px;margin-left: 30px">
-                                <input type="radio"  name="is_threads_radio" value="True" >
+                                <input id="is_threads_true" type="radio"  name="is_threads_radio" value="True" >
                                 <span style="font-size: medium">是</span>
                             </label>
                             <label style="width: 100px">
-                                <input type="radio"  name="is_threads_radio" value="False">
+                                <input  id="is_threads_false" type="radio"  name="is_threads_radio" value="False">
                                 <span style="font-size: medium">否</span>
                             </label>
 
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <label class="col-sm-2 control-label">id</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="case_id" type="text" class="form-control"  aria-describedby="sizing-addon2">
                         </div>
                     </div>
                     <div class="form-group">
@@ -124,12 +132,12 @@
     </div>
     <script>
         function add_case(pro_id) {
-            console.log("+++++++"+pro_id)
             const case_name = document.getElementById("case_name").value;
             const case_type = document.getElementById("case_type").value;
             const retry_count = document.getElementById("retry_count").value;
             const is_monitor = $(':radio[name="is_monitor_radio"]:checked').val();
-            const is_threads = $(':radio[name="is_threads_radio"]:checked').val()
+            const is_threads = $(':radio[name="is_threads_radio"]:checked').val();
+            const case_id = document.getElementById("case_id").value;
             $.get(
                 '/add_case/'+pro_id+'/',
                 {
@@ -137,11 +145,30 @@
                     "case_type":case_type,
                     "retry_count":retry_count,
                     "is_monitor":is_monitor,
-                    "is_threads":is_threads
+                    "is_threads":is_threads,
+                    "case_id":case_id
                 },function (ret) {
-                    
+                    document.location.reload()
                 }
 
+            )
+        }
+
+        edit_case = function (id){
+            console.log("+++++++++++")
+            $.get(
+                '/edit_case/',
+                {"id":id},
+                function (ret){
+
+                    document.getElementById("add_case_form").style.display="block";
+                    document.getElementById("case_name").value = ret.name;
+                    document.getElementById("case_type").value = ret.case_type;
+                    document.getElementById("retry_count").value = ret.retry_count;
+                    document.getElementById("is_monitor_"+ret.is_monitor).checked="checked";
+                    document.getElementById("is_threads_"+ret.is_monitor).checked="checked";case_id
+                    document.getElementById("case_id").value = ret.id;
+                }
             )
         }
     </script>

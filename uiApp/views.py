@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from uiApp.models import *
@@ -43,10 +45,18 @@ def add_case(request, pro_id):
     is_threads = False
     if request.GET['is_monitor'] == "True":
         is_monitor = True
-    print("===========" + pro_id)
+
+    case_id = request.GET['case_id']
+    print(case_id+"++++++++++++")
     DB_cases.objects.create(pro_id=pro_id, name=request.GET['case_name'], retry_count=request.GET['retry_count'],
                             is_monitor=is_monitor, is_threads=is_threads, case_type=request.GET['case_type'])
     cases = DB_cases.objects.filter(pro_id=pro_id)
     project = list(DB_end.objects.filter(id=pro_id))[0]
     param = {"cases": cases, "project": project}
     return render(request, 'case.html', param)
+
+
+def edit_case(request):
+    case_id = request.GET['id']
+    case = list(DB_cases.objects.filter(id=case_id).values())[0]
+    return HttpResponse(json.dumps(case), content_type="application/json")
