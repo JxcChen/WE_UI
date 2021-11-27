@@ -24,5 +24,7 @@ urlpatterns = [
     re_path('del_end/(?P<del_id>.+)/',del_end),
     re_path('testcases/(?P<pro_id>.+)/',testcases),
     re_path('add_case/(?P<pro_id>.+)/', add_case),
-    re_path('edit_case/', edit_case)
+    re_path('edit_case/', edit_case),
+    re_path('update_case/(?P<pro_id>.+)',update_case),
+    re_path('del_case/', del_case)
 ]

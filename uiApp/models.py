@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 
 
@@ -19,6 +21,7 @@ class DB_end(models.Model):
     phone = models.CharField(max_length=200, null=True, blank=True)
     email = models.CharField(max_length=200, null=True, blank=True)
     dingtalk = models.CharField(max_length=200, null=True, blank=True)
+
 
     def __str__(self):
         return self.name
