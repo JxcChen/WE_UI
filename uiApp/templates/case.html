@@ -66,26 +66,29 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <form id="add_case_form" class="form-horizontal" role="form" style="width: 600px ;align-content: center;margin-left: 300px;display: none" >
-                    <div class="form-group">
+                <form id="add_case_form" class="form-horizontal" role="form"
+                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" >
+                    <h3>新增用例</h3>
+                    <div class="form-group" style="margin-left: 40px;margin-top: 40px">
                          <label class="col-sm-2 control-label">用例名称</label>
                         <div class="input-group" style="width: 300px">
                           <input id="case_name" type="text" class="form-control" placeholder="用例名称" aria-describedby="sizing-addon2">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-left: 40px;">
                         <label class="col-sm-2 control-label">用例类型</label>
                         <div class="input-group" style="width: 300px">
                           <input id="case_type" type="text" class="form-control" placeholder="用例类型" aria-describedby="sizing-addon2">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-left: 40px;">
                         <label class="col-sm-2 control-label">重试次数</label>
                         <div class="input-group" style="width: 300px">
                           <input id="retry_count" type="text" class="form-control" placeholder="重试次数" aria-describedby="sizing-addon2">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-left: 40px">
                         <label  class="col-sm-2 control-label">是否监控</label>
                         <div class="input-group">
                             <label style="width: 100px;margin-left: 30px">
@@ -99,7 +102,8 @@
 
                         </div>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group" style="margin-left: 40px">
                         <label  class="col-sm-2 control-label">是否并发</label>
                         <div class="input-group">
                             <label style="width: 100px;margin-left: 30px">
@@ -111,6 +115,13 @@
                                 <span style="font-size: medium">否</span>
                             </label>
 
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px">
+                        <label class="col-sm-2 control-label">用例脚本</label>
+                        <div class="input-group" style="width: 300px">
+                          <input name="fileUpload" type="file" class="form-control"aria-describedby="sizing-addon2">
                         </div>
                     </div>
                     <div class="form-group" style="display: none">
@@ -195,12 +206,14 @@
     </div>
     <script>
         function add_case(pro_id) {
+
             const case_name = document.getElementById("case_name").value;
             const case_type = document.getElementById("case_type").value;
             const retry_count = document.getElementById("retry_count").value;
             const is_monitor = $(':radio[name="is_monitor_radio"]:checked').val();
             const is_threads = $(':radio[name="is_threads_radio"]:checked').val();
             const case_id = document.getElementById("case_id").value;
+            document.getElementById("py_script").action='/upload/'+case_id+'/';
             $.get(
                 '/add_case/'+pro_id+'/',
                 {
@@ -211,7 +224,9 @@
                     "is_threads":is_threads,
                     "case_id":case_id
                 },function (ret) {
-                    document.location.reload()
+                    const py_script=document.getElementById("add_case_form")
+                    py_script.commit()
+
                 }
 
             )

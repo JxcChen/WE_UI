@@ -59,7 +59,6 @@ def add_case(request, pro_id):
 
 
 def edit_case(request):
-
     case_id = request.GET['id']
     case = list(DB_cases.objects.filter(id=case_id).values())[0]
     return HttpResponse(json.dumps(case), content_type="application/json")
@@ -79,6 +78,25 @@ def update_case(request, pro_id):
                                                is_monitor=is_monitor, is_threads=is_threads,
                                                case_type=request.GET['case_type'])
     return HttpResponseRedirect('/testcases/' + pro_id + '/')
+
+
+# 上传脚本
+def upload_script(request, case_id):
+    # 拿到端id
+    pro_id = DB_end.objects.filter(id=case_id)[0].duan_id
+    # 获取到上传的脚本
+    myFile = request.FILES.get("fileUpload", None)
+    if not myFile:
+        return HttpResponseRedirect('/case_list/%s/' % pro_id)
+    file_name = str(myFile)
+    fp = open('MyClient/client_%s/cases/%s' % (pro_id, file_name), 'wb+')
+    for i in myFile.chunks():
+        fp.write(i)
+    fp.close()
+    # 更新用例的数据库py字端
+    DB_cases.objects.filter(id=case_id).update(py=file_name)
+    # 返回
+    return HttpResponseRedirect('/testcases/%s/' % pro_id)
 
 
 def del_case(request):
