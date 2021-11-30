@@ -19,12 +19,14 @@ from uiApp.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/',home),
-    path('save_end/',save_end),
-    re_path('del_end/(?P<del_id>.+)/',del_end),
-    re_path('testcases/(?P<pro_id>.+)/',testcases),
+    path('home/', home),
+    path('save_end/', save_end),
+    re_path('del_end/(?P<del_id>.+)/', del_end),
+    re_path('testcases/(?P<pro_id>.+)/', testcases),
     re_path('add_case/(?P<pro_id>.+)/', add_case),
-    re_path('edit_case/', edit_case),
-    re_path('update_case/(?P<pro_id>.+)',update_case),
-    re_path('del_case/', del_case)
+    path('edit_case/', edit_case),
+    re_path('update_case/(?P<pro_id>.+)/', update_case),
+    path('del_case/', del_case),  # 没有待正则的不需要使用re_path
+    re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),
+    path('update_project/',update_project)
 ]

@@ -25,8 +25,8 @@ def save_end(request):
     end = DB_end.objects.create(name=pro_name, host=pro_host, email=pro_email)
     base_path = os.path.dirname(os.path.abspath(__file__))
     demo_path = os.path.join(base_path, r"my_client/demo_client")
-    new_client = os.path.join(base_path, r"my_client/client_"+str(end.id))
-    shutil.copytree(demo_path,new_client)
+    new_client = os.path.join(base_path, r"my_client/client_" + str(end.id))
+    shutil.copytree(demo_path, new_client)
     return HttpResponse("")
 
 
@@ -43,6 +43,7 @@ def testcases(request, pro_id):
 
 
 def add_case(request, pro_id):
+    print("+++++++++++")
     is_monitor = False
     if request.GET['is_monitor'] == "True":
         is_monitor = True
@@ -58,6 +59,7 @@ def add_case(request, pro_id):
 
 
 def edit_case(request):
+
     case_id = request.GET['id']
     case = list(DB_cases.objects.filter(id=case_id).values())[0]
     return HttpResponse(json.dumps(case), content_type="application/json")
@@ -76,7 +78,7 @@ def update_case(request, pro_id):
     DB_cases.objects.filter(id=case_id).update(name=request.GET['case_name'], retry_count=request.GET['retry_count'],
                                                is_monitor=is_monitor, is_threads=is_threads,
                                                case_type=request.GET['case_type'])
-    return HttpResponseRedirect('/testcases/'+ pro_id + '/')
+    return HttpResponseRedirect('/testcases/' + pro_id + '/')
 
 
 def del_case(request):
@@ -84,4 +86,20 @@ def del_case(request):
     pro_id = request.GET['pro_id']
     DB_cases.objects.filter(id=case_id).delete()
 
-    return HttpResponseRedirect('/testcases/'+ pro_id + '/')
+    return HttpResponseRedirect('/testcases/' + pro_id + '/')
+
+
+# 获取项目信息
+def get_project_msg(request, pro_id):
+    pro_msg = list(DB_end.objects.filter(id=pro_id).values())[0]
+    return HttpResponse(json.dumps(pro_msg), content_type="application/json")
+
+
+# 编辑项目
+def update_project(request):
+    DB_end.objects.filter(id=request.GET['pro_id']).update(name=request.GET['pro_name'], host=request.GET['pro_host'],
+                                                           check_time=request.GET['check_time'],
+                                                           phone=request.GET['phone'], email=request.GET['email'],
+                                                           dingtalk=request.GET['dingtalk'],
+                                                           max_threads=request.GET['max_threads'], )
+    return HttpResponseRedirect("/home/")

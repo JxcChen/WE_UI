@@ -21,7 +21,8 @@ class DB_end(models.Model):
     phone = models.CharField(max_length=200, null=True, blank=True)
     email = models.CharField(max_length=200, null=True, blank=True)
     dingtalk = models.CharField(max_length=200, null=True, blank=True)
-
+    user = models.CharField(max_length=20, null=True, blank=True)
+    max_threads = models.IntegerField(default=5)
 
     def __str__(self):
         return self.name

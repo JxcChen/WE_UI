@@ -5,11 +5,13 @@
     <title>case_list</title>
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+    <script src="/static/jquery-3.5.1/jquery-3.5.1.js"></script>
+	<script src="/static/jquery-3.5.1/jquery-3.5.1.js"></script>
 </head>
 
 <body>
 
-    {% include 'menu.html' %}
+    {% include 'new_menu.html' %}
 
     <div class="container">
         <div class="row clearfix">
@@ -216,7 +218,7 @@
         }
 
         edit_case = function (id){
-            console.log("+++++++++++")
+
             $.get(
                 '/edit_case/',
                 {"id":id},
