@@ -1,5 +1,6 @@
 import json
 import shutil
+import subprocess
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -43,7 +44,6 @@ def testcases(request, pro_id):
 
 
 def add_case(request, pro_id):
-    print("+++++++++++")
     is_monitor = False
     if request.GET['is_monitor'] == "True":
         is_monitor = True
@@ -77,25 +77,26 @@ def update_case(request, pro_id):
     DB_cases.objects.filter(id=case_id).update(name=request.GET['case_name'], retry_count=request.GET['retry_count'],
                                                is_monitor=is_monitor, is_threads=is_threads,
                                                case_type=request.GET['case_type'])
-    return HttpResponseRedirect('/testcases/' + pro_id + '/')
+    return HttpResponse('')
 
 
 # 上传脚本
 def upload_script(request, case_id):
-    print("++++++++++++")
     # 拿到端id
-    pro_id = DB_end.objects.filter(id=case_id)[0].duan_id
+    pro_id = DB_cases.objects.filter(id=case_id)[0].pro_id
     # 获取到上传的脚本
-    my_file = request.FILES.get("fileUpload", None)
+    my_file = request.FILES.get("script_file", None)
+    # 如果文件为空则直接返回
     if not my_file:
-        return HttpResponseRedirect('/testcases/%s/' % pro_id)
+        return HttpResponseRedirect('/testcases/' + pro_id + '/')
+    # 获取文件名称
     file_name = str(my_file)
-    fp = open('MyClient/client_%s/cases/%s' % (pro_id, file_name), 'wb+')
-    for i in my_file.chunks():
-        fp.write(i)
-    fp.close()
-    # 更新用例的数据库py字端
-    DB_cases.objects.filter(id=case_id).update(py=file_name)
+    # 打开本地文件
+    with open("uiApp/my_client/client_%s/case/%s" % (pro_id, file_name), 'wb') as file:
+        for content in my_file.chunks():
+            file.write(content)
+    # 将文件名称存到数据库
+    DB_cases.objects.filter(id=case_id).update(script=file_name)
     # 返回
     return HttpResponseRedirect('/testcases/%s/' % pro_id)
 
@@ -106,6 +107,20 @@ def del_case(request):
     DB_cases.objects.filter(id=case_id).delete()
 
     return HttpResponseRedirect('/testcases/' + pro_id + '/')
+
+
+# 运行脚本
+def run_script(request,case_id):
+    print("+++++")
+    case = DB_cases.objects.filter(id=case_id)[0]
+    pro_id = case.pro_id
+    script_name = case.script
+    # 判断是否未上传脚本文件
+    if script_name in ['',' ',None,'None']:
+        return HttpResponse('Error')
+    # 执行py文件
+    subprocess.call('python uiApp/my_client/client_%s/case/%s' % (pro_id, script_name),shell=True)
+    return HttpResponse('Success')
 
 
 # 获取项目信息

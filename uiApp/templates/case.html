@@ -55,7 +55,7 @@
                                     {{ case.is_threads }}
                                 </td>
                                 <td width="25%">
-                                    <button class="btn btn-sm btn-primary">执行</button> &nbsp
+                                    <button onclick="run_case({{ case.id }})" id="run_btn" class="btn btn-sm btn-primary">执行</button> &nbsp
                                     <button onclick="edit_case({{ case.id }})" class="btn btn-sm btn-primary">编辑</button> &nbsp
                                     <button class="btn btn-sm btn-primary">报告</button> &nbsp
                                     <button onclick="del_case({{ case.id}},{{ project.id }})" type="button" class="btn btn-sm btn-danger">删除</button>
@@ -130,7 +130,7 @@
 
                 <form id="edit_case_form"class="form-horizontal" role="form"
                       style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
-                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" >
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" enctype="multipart/form-data" action="" method="post" >
                     <div class="form-group" style="margin-left: 40px;margin-top: 40px">
                          <label class="col-sm-2 control-label">用例名称</label>
                         <div class="input-group" style="width: 300px">
@@ -177,7 +177,13 @@
 
                         </div>
                     </div>
-
+                    <div class="form-group" style="margin-left: 40px;" >
+                        <label class="col-sm-2 control-label">上传脚本</label>
+                        <div class="input-group" style="width: 300px" >
+                          <span id="script_name"></span>
+                          <span><input id="edit_py_script" type="file" name="script_file"></span>
+                        </div>
+                    </div>
                     <div class="form-group" style="display: none">
                         <label class="col-sm-2 control-label">id</label>
                         <div class="input-group" style="width: 300px">
@@ -227,7 +233,7 @@
                 '/edit_case/',
                 {"id":id},
                 function (ret){
-
+                    console.log(ret.script)
                     document.getElementById("edit_case_form").style.display="block";
                     document.getElementById("edit_case_name").value = ret.name;
                     document.getElementById("edit_case_type").value = ret.case_type;
@@ -235,6 +241,8 @@
                     document.getElementById("edit_is_monitor_"+ret.is_monitor).checked="checked";
                     document.getElementById("edit_is_threads_"+ret.is_monitor).checked="checked";
                     document.getElementById("edit_case_id").value = ret.id;
+                    document.getElementById("script_name").innerText = ret.script;
+                    document.getElementById("edit_case_form").action="/upload/"+ret.id+"/";
                 }
             )
         }
@@ -256,7 +264,8 @@
                     "is_threads":is_threads,
                     "case_id":case_id
                 },function (ret) {
-                    document.location.reload()
+                    const edit_form = document.getElementById("edit_case_form");
+                    edit_form.submit();
                 }
 
             )
@@ -268,6 +277,22 @@
                 {"case_id":case_id,"pro_id":pro_id},
                 function (ret) {
                     document.location.reload()
+                }
+            )
+        }
+
+        run_case = function (case_id) {
+            document.getElementById("run_btn").innerText = "执行中.."
+            $.get(
+                '/run_script/'+case_id+'/',
+                {},
+                function (ret) {
+                    if (ret != 'Error'){
+                        alert('执行成功');
+                    }else{
+                        alert('请先上传自动化脚本');
+                    }
+                    document.getElementById("run_btn").innerText = "执行"
                 }
             )
         }

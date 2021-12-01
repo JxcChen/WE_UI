@@ -29,5 +29,6 @@ urlpatterns = [
     path('del_case/', del_case),  # 没有待正则的不需要使用re_path
     re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),
     path('update_project/',update_project),
-    re_path('upload/(?P<pro_id>.+)/', upload_script)
+    re_path('upload/(?P<case_id>.+)/', upload_script),
+    re_path('run_script/(?P<case_id>.+)/',run_script)
 ]
