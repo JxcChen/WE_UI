@@ -82,15 +82,16 @@ def update_case(request, pro_id):
 
 # 上传脚本
 def upload_script(request, case_id):
+    print("++++++++++++")
     # 拿到端id
     pro_id = DB_end.objects.filter(id=case_id)[0].duan_id
     # 获取到上传的脚本
-    myFile = request.FILES.get("fileUpload", None)
-    if not myFile:
-        return HttpResponseRedirect('/case_list/%s/' % pro_id)
-    file_name = str(myFile)
+    my_file = request.FILES.get("fileUpload", None)
+    if not my_file:
+        return HttpResponseRedirect('/testcases/%s/' % pro_id)
+    file_name = str(my_file)
     fp = open('MyClient/client_%s/cases/%s' % (pro_id, file_name), 'wb+')
-    for i in myFile.chunks():
+    for i in my_file.chunks():
         fp.write(i)
     fp.close()
     # 更新用例的数据库py字端
