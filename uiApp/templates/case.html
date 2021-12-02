@@ -20,8 +20,19 @@
                 <div align="right">
                     <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_case_form").style.display="block"'>添加用例</button>
                     <button class="btn btn-primary btn-sm" onclick='concurrent_run({{ project.id }})'>并发执行</button>
-                </div>
 
+                </div>
+                <div>
+                   <li class="dropdown" style="list-style: none">
+                    <a style="color: #282626" href="#" class="dropdown-togfsgle" data-toggle="dropdown">
+                        监控状态 <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" >
+                        <li><a href="#">开启</a></li>
+                        <li><a href="#">关闭</a></li>
+                    </ul>
+                </li>
+                </div>
                 <table class="table table-bordered">
                     <thead style="background-color: lightskyblue">
                         <tr>
