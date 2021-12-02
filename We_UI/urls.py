@@ -30,5 +30,6 @@ urlpatterns = [
     re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),
     path('update_project/',update_project),
     re_path('upload/(?P<case_id>.+)/', upload_script),
-    re_path('run_script/(?P<case_id>.+)/',run_script)
+    re_path('run_script/(?P<case_id>.+)/',run_script),
+    re_path('concurrent_run/(?P<pro_id>.+)/',concurrent_run_script)
 ]
