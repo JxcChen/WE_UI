@@ -27,7 +27,7 @@ def save_end(request):
     pro_email = request.GET['email']
     end = DB_end.objects.create(name=pro_name, host=pro_host, email=pro_email)
     base_path = os.path.dirname(os.path.abspath(__file__))
-    demo_path = os.path.join(base_path, r"my_client/demo_client")
+    demo_path = os.path.join(base_path, r"../my_client/demo_client")
     new_client = os.path.join(base_path, r"my_client/client_" + str(end.id))
     shutil.copytree(demo_path, new_client)
     return HttpResponse("")
@@ -142,7 +142,7 @@ def run_script(request, case_id):
     if script_name in ['', ' ', None, 'None']:
         return HttpResponse('Error')
     # 执行py文件
-    subprocess.call('python uiApp/my_client/client_%s/case/%s' % (pro_id, script_name), shell=True)
+    subprocess.call('python my_client/client_%s/case/%s' % (pro_id, script_name), shell=True)
     return HttpResponse('Success')
 
 
@@ -155,7 +155,7 @@ def concurrent_run_script(request, pro_id):
     def concurrent_run(case):
         if case.script not in ['', ' ', None, 'None']:
             # 执行py文件
-            subprocess.call('python uiApp/my_client/client_%s/case/%s' % (case.pro_id, case.script), shell=True)
+            subprocess.call('python my_client/client_%s/case/%s' % (case.pro_id, case.script), shell=True)
             print(case, "执行完成")
 
     tf = []
