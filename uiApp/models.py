@@ -17,7 +17,7 @@ class DB_href(models.Model):
 class DB_end(models.Model):
     name = models.CharField(max_length=20, null=True, blank=True)
     host = models.CharField(max_length=200, null=True, blank=True)
-    check_time = models.CharField(max_length=50, null=True, blank=True)
+    check_time = models.IntegerField(default=60)
     phone = models.CharField(max_length=200, null=True, blank=True)
     email = models.CharField(max_length=200, null=True, blank=True)
     dingtalk = models.CharField(max_length=200, null=True, blank=True)

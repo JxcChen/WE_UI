@@ -24,14 +24,14 @@
                 </div>
                 <div>
                    <li class="dropdown" style="list-style: none">
-                    <a style="color: #282626" href="#" class="dropdown-togfsgle" data-toggle="dropdown">
-                        监控状态 <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" >
-                        <li><a href="#">开启</a></li>
-                        <li><a href="#">关闭</a></li>
-                    </ul>
-                </li>
+                        <a style="color: #282626" href="#" class="dropdown-togfsgle" data-toggle="dropdown">
+                            监控状态 <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" >
+                            <li><a href="/open_monitor/{{ project.id }}">开启</a></li>
+                            <li><a href="/close_monitor/{{ project.id }}">关闭</a></li>
+                        </ul>
+                    </li>
                 </div>
                 <table class="table table-bordered">
                     <thead style="background-color: lightskyblue">

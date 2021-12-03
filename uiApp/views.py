@@ -171,3 +171,22 @@ def concurrent_run_script(request, pro_id):
     for t in tf:
         t.join()  # 子线程再未完成的情况下 主线程会一直处于阻塞状态
     return HttpResponse('Success')
+
+
+def open_monitor(request, pro_id):
+    # 判断监控是否已经开启
+
+    # 未开启则开启监控
+    def start_monitor():
+        subprocess.call('python uiApp/monitor.py %s WEB' % pro_id, shell=True)
+
+    # 开一个新的线程进行监控
+    t = threading.Thread(target=start_monitor())
+    t.setDaemon(True)  # 设置守护进程
+    # 执行进程
+    t.start()
+    return HttpResponseRedirect("/testcases/%s/" % pro_id)
+
+
+def close_monitor(request, pro_id):
+    pass
