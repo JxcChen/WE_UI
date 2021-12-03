@@ -115,7 +115,7 @@ def upload_script(request, case_id):
     # 获取文件名称
     file_name = str(my_file)
     # 打开本地文件
-    with open("uiApp/my_client/client_%s/case/%s" % (pro_id, file_name), 'wb') as file:
+    with open("my_client/client_%s/case/%s" % (pro_id, file_name), 'wb') as file:
         for content in my_file.chunks():
             file.write(content)
     # 将文件名称存到数据库
@@ -150,6 +150,7 @@ def run_script(request, case_id):
 def concurrent_run_script(request, pro_id):
     # 先获取该项目下所有可以并发执行的测试用例
     cases = DB_cases.objects.filter(pro_id=pro_id, is_threads='True')
+    max_threads = DB_end.objects.filter(id=pro_id)[0].max_threads
 
     # 声明执行用例方法
     def concurrent_run(case):
@@ -159,17 +160,21 @@ def concurrent_run_script(request, pro_id):
             print(case, "执行完成")
 
     tf = []
+
     # 声明多个线程执行运行用例方法
     for case in cases:
         t = threading.Thread(target=concurrent_run, args=(case,))
         t.setDaemon(True)  # 将线程声明为守护线程
         tf.append(t)
-    # 执行
-    for t in tf:
-        t.start()  # 运行线程任务
+    # 限制最大并发
+    for i in range(0,len(tf),max_threads):
+        tmp = tf[i:i+max_threads]
+        # 执行
+        for t in tmp:
+            t.start()  # 运行线程任务
 
-    for t in tf:
-        t.join()  # 子线程再未完成的情况下 主线程会一直处于阻塞状态
+        for t in tmp:
+            t.join()  # 子线程再未完成的情况下 主线程会一直处于阻塞状态
     return HttpResponse('Success')
 
 
