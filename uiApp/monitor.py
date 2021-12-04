@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import os
 import subprocess
 import sys
@@ -7,11 +9,13 @@ path = os.path.dirname(os.path.dirname(__file__))
 print(path)
 sys.path.append(path)
 
-import django
 # 设置环境变量
 os.environ['DJANGO_SETTINGS_MODULE'] = 'We_UI.settings'
+import django
+
 # 启动django
 django.setup()
+
 from uiApp.models import *
 
 
@@ -24,6 +28,7 @@ def monitor():
         for case in cases:
             if case not in ['', None, ' ', 'None']:
                 print(case.script)
+                print('python3 my_client/client_%s/case/%s' % (pro_id, case.script))
                 subprocess.call('python my_client/client_%s/case/%s' % (pro_id, case.script), shell=True)
         print('本轮测试执行完毕')
         time.sleep(project.check_time)

@@ -1,4 +1,5 @@
 import json
+import re
 import shutil
 import subprocess
 import threading
@@ -142,7 +143,7 @@ def run_script(request, case_id):
     if script_name in ['', ' ', None, 'None']:
         return HttpResponse('Error')
     # 执行py文件
-    subprocess.call('python my_client/client_%s/case/%s' % (pro_id, script_name), shell=True)
+    subprocess.call('python3 my_client/client_%s/case/%s' % (pro_id, script_name), shell=True)
     return HttpResponse('Success')
 
 
@@ -156,7 +157,7 @@ def concurrent_run_script(request, pro_id):
     def concurrent_run(case):
         if case.script not in ['', ' ', None, 'None']:
             # 执行py文件
-            subprocess.call('python my_client/client_%s/case/%s' % (case.pro_id, case.script), shell=True)
+            subprocess.call('python3 my_client/client_%s/case/%s' % (case.pro_id, case.script), shell=True)
             print(case, "执行完成")
 
     tf = []
@@ -167,8 +168,9 @@ def concurrent_run_script(request, pro_id):
         t.setDaemon(True)  # 将线程声明为守护线程
         tf.append(t)
     # 限制最大并发
-    for i in range(0,len(tf),max_threads):
-        tmp = tf[i:i+max_threads]
+
+    for i in range(0, len(tf), max_threads):
+        tmp = tf[i:i + max_threads]
         # 执行
         for t in tmp:
             t.start()  # 运行线程任务
@@ -180,18 +182,34 @@ def concurrent_run_script(request, pro_id):
 
 def open_monitor(request, pro_id):
     # 判断监控是否已经开启
+    try:
+        process = subprocess.check_output('ps -ef | grep "monitor.py %s WEB" | grep -v grep' % pro_id, shell=True)
+        print("监控已经开启")
+    except:
+        # 未开启则开启监控
+        def start_monitor():
+            subprocess.call('python3 uiApp/monitor.py %s WEB' % pro_id, shell=True)
 
-    # 未开启则开启监控
-    def start_monitor():
-        subprocess.call('python uiApp/monitor.py %s WEB' % pro_id, shell=True)
-
-    # 开一个新的线程进行监控
-    t = threading.Thread(target=start_monitor())
-    t.setDaemon(True)  # 设置守护进程
-    # 执行进程
-    t.start()
+        # 开一个新的线程进行监控
+        t = threading.Thread(target=start_monitor)
+        # t.setDaemon(True)  # 设置守护进程
+        # 执行进程
+        t.start()
+        print("+++++++++")
     return HttpResponseRedirect("/testcases/%s/" % pro_id)
 
 
+# 关闭监控
 def close_monitor(request, pro_id):
-    pass
+    # 查看监控是否开启 开启则关闭
+    try:
+        process = subprocess.check_output('ps -ef | grep "monitor.py %s WEB" | grep -v grep' % pro_id, shell=True)
+        print("监控已开启，现在关闭")
+        # 使用正则
+        pids = re.findall(r'(\d+)',str(process))
+        pid = max([int(i) for i in pids])
+        subprocess.call('kill -9 %s' % pid,
+                        shell=True)
+    except:
+        print("监控尚未开启")
+    return HttpResponseRedirect("/testcases/%s/" % pro_id)
