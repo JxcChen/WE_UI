@@ -189,9 +189,9 @@ function showOutput(id, name) {
 
 <div class='heading'>
 <h1>加入购物车测试报告</h1>
-<p class='attribute'><strong>Start Time:</strong> 2021-12-06 20:50:14</p>
-<p class='attribute'><strong>Duration:</strong> 0:00:03.239819</p>
-<p class='attribute'><strong>Status:</strong> Pass 2</p>
+<p class='attribute'><strong>Start Time:</strong> 2021-12-06 22:49:03</p>
+<p class='attribute'><strong>Duration:</strong> 0:00:06.007227</p>
+<p class='attribute'><strong>Status:</strong> Error 2</p>
 
 <p class='description'>用例名称：加入购物车 脚本名称：test_py.py</p>
 </div>
@@ -221,31 +221,147 @@ function showOutput(id, name) {
     <td>View</td>
 </tr>
 
-<tr class='passClass'>
+<tr class='errorClass'>
     <td>Test</td>
     <td>2</td>
+    <td>0</td>
+    <td>0</td>
     <td>2</td>
-    <td>0</td>
-    <td>0</td>
     <td><a href="javascript:showClassDetail('c1',2)">Detail</a></td>
 </tr>
 
-<tr id='pt1.1' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_01: 这里是用例描述</div></td>
-    <td colspan='5' align='center'>pass</td>
+<tr id='ft1.1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_01: 这里是用例描述</div></td>
+    <td colspan='5' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
+        error</a>
+
+    <div id='div_ft1.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <pre>
+        
+ft1.1: Traceback (most recent call last):
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/case/test_py.py", line 42, in test_01
+    self.driver.find_element(*search_input).send_keys("hello world")
+AttributeError: 'NoneType' object has no attribute 'send_keys'
+Traceback (most recent call last):
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/case/test_py.py", line 42, in test_01
+    self.driver.find_element(*search_input).send_keys("hello world")
+AttributeError: 'NoneType' object has no attribute 'send_keys'
+
+
+        </pre>
+    </div>
+    <!--css div popup end-->
+
+    </td>
 </tr>
 
-<tr id='pt1.2' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_02: 这里是用例描述</div></td>
-    <td colspan='5' align='center'>pass</td>
+<tr id='ft1.2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_02: 这里是用例描述</div></td>
+    <td colspan='5' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.2')" >
+        error</a>
+
+    <div id='div_ft1.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <pre>
+        
+ft1.2: Traceback (most recent call last):
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/case/test_py.py", line 37, in setUp
+    util_get_index_page(self, host)
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/public/utils.py", line 20, in util_get_index_page
+    self.driver.get(host)
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 436, in get
+    self.execute(Command.GET, {'url': url})
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 424, in execute
+    self.error_handler.check_response(response)
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 247, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=96.0.4664.55)
+Stacktrace:
+0   chromedriver                        0x0000000105231549 __gxx_personality_v0 + 573257
+1   chromedriver                        0x00000001051be603 __gxx_personality_v0 + 102403
+2   chromedriver                        0x0000000104d80478 chromedriver + 173176
+3   chromedriver                        0x0000000104d611a4 chromedriver + 45476
+4   chromedriver                        0x0000000104dd64cc chromedriver + 525516
+5   chromedriver                        0x0000000104de502f chromedriver + 585775
+6   chromedriver                        0x0000000104dd2f13 chromedriver + 511763
+7   chromedriver                        0x0000000104da90a0 chromedriver + 340128
+8   chromedriver                        0x0000000104daa305 chromedriver + 344837
+9   chromedriver                        0x00000001051ee89f __gxx_personality_v0 + 299679
+10  chromedriver                        0x00000001052053da __gxx_personality_v0 + 392666
+11  chromedriver                        0x000000010520b31b __gxx_personality_v0 + 417051
+12  chromedriver                        0x0000000105206afa __gxx_personality_v0 + 398586
+13  chromedriver                        0x00000001051e34ac __gxx_personality_v0 + 253612
+14  chromedriver                        0x0000000105221b78 __gxx_personality_v0 + 509304
+15  chromedriver                        0x0000000105221d01 __gxx_personality_v0 + 509697
+16  chromedriver                        0x0000000105238ac8 __gxx_personality_v0 + 603336
+17  libsystem_pthread.dylib             0x00007ff81a2a3514 _pthread_start + 125
+18  libsystem_pthread.dylib             0x00007ff81a29f02f thread_start + 15
+
+Traceback (most recent call last):
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/case/test_py.py", line 37, in setUp
+    util_get_index_page(self, host)
+  File "/Users/chnjx/PycharmProjects/ui_pro/WE_UI/my_client/client_10/public/utils.py", line 20, in util_get_index_page
+    self.driver.get(host)
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 436, in get
+    self.execute(Command.GET, {'url': url})
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 424, in execute
+    self.error_handler.check_response(response)
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 247, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=96.0.4664.55)
+Stacktrace:
+0   chromedriver                        0x0000000105231549 __gxx_personality_v0 + 573257
+1   chromedriver                        0x00000001051be603 __gxx_personality_v0 + 102403
+2   chromedriver                        0x0000000104d80478 chromedriver + 173176
+3   chromedriver                        0x0000000104d611a4 chromedriver + 45476
+4   chromedriver                        0x0000000104dd64cc chromedriver + 525516
+5   chromedriver                        0x0000000104de502f chromedriver + 585775
+6   chromedriver                        0x0000000104dd2f13 chromedriver + 511763
+7   chromedriver                        0x0000000104da90a0 chromedriver + 340128
+8   chromedriver                        0x0000000104daa305 chromedriver + 344837
+9   chromedriver                        0x00000001051ee89f __gxx_personality_v0 + 299679
+10  chromedriver                        0x00000001052053da __gxx_personality_v0 + 392666
+11  chromedriver                        0x000000010520b31b __gxx_personality_v0 + 417051
+12  chromedriver                        0x0000000105206afa __gxx_personality_v0 + 398586
+13  chromedriver                        0x00000001051e34ac __gxx_personality_v0 + 253612
+14  chromedriver                        0x0000000105221b78 __gxx_personality_v0 + 509304
+15  chromedriver                        0x0000000105221d01 __gxx_personality_v0 + 509697
+16  chromedriver                        0x0000000105238ac8 __gxx_personality_v0 + 603336
+17  libsystem_pthread.dylib             0x00007ff81a2a3514 _pthread_start + 125
+18  libsystem_pthread.dylib             0x00007ff81a29f02f thread_start + 15
+
+
+
+        </pre>
+    </div>
+    <!--css div popup end-->
+
+    </td>
 </tr>
 
 <tr id='total_row'>
     <td>Total</td>
     <td>2</td>
+    <td>0</td>
+    <td>0</td>
     <td>2</td>
-    <td>0</td>
-    <td>0</td>
     <td>&nbsp;</td>
 </tr>
 </table>

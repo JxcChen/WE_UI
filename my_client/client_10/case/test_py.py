@@ -49,9 +49,15 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     # 获取第一个系统参数
-    host = sys.argv[1]
-    script_name = sys.argv[2]
-    case_name = sys.argv[3]
-    # print(host)
-    param = {"script_name": script_name, "case_name": case_name}
-    util_run_with_report(Test, param)
+    param = {}
+    try:
+        host = sys.argv[1]
+        script_name = sys.argv[2]
+        case_name = sys.argv[3]
+        param["script_name"] = script_name
+        param["case_name"] = case_name
+        util_run_with_report(Test, param)
+    except:
+        util_run_with_report(Test, param)
+
+
