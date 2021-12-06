@@ -28,8 +28,7 @@ def monitor():
         for case in cases:
             if case not in ['', None, ' ', 'None']:
                 print(case.script)
-                print('python3 my_client/client_%s/case/%s' % (pro_id, case.script))
-                subprocess.call('python my_client/client_%s/case/%s' % (pro_id, case.script), shell=True)
+                subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (case.pro_id, case.script,host, case.script,case.name), shell=True)
         print('本轮测试执行完毕')
         time.sleep(project.check_time)
 

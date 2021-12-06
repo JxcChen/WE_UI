@@ -5,6 +5,7 @@
     <title>case_list</title>
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/jquery-nice-select-master/css/nice-select.css">
 </head>
 
 <body>
@@ -13,26 +14,37 @@
 
     <div class="container">
         <div class="row clearfix">
-            <div class="col-md-12 column">
-                <h3 class="text-center">
+            <div class="col-md-12 column" style="position: relative">
+                <h3 class="text-center" style="display: inline-block;position: absolute;left: 40%;top: -25px">
                     {{ project.name }}的测试用例
                 </h3>
-                <div align="right">
+                <div align="right" style="font-size: medium; display: inline-block; position: absolute; right: 15px">
+                    项目环境：
+                    <select name="" id="using_host" class="wide">
+                        {% for host in hosts %}
+                            <option value="{{ host }}">{{ host }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+
+                <div class="dropdown" style="margin: 20px 0 10px">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="position: relative; top: 30px">
+                    监控状态
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="/open_monitor/{{ project.id }}">开启</a></li>
+                    <li><a href="/close_monitor/{{ project.id }}">关闭</a></li>
+                  </ul>
+                  <div align="right">
                     <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_case_form").style.display="block"'>添加用例</button>
                     <button class="btn btn-primary btn-sm" onclick='concurrent_run({{ project.id }})'>并发执行</button>
+                  </div>
+                </div>
 
-                </div>
-                <div>
-                   <li class="dropdown" style="list-style: none">
-                        <a style="color: #282626" href="#" class="dropdown-togfsgle" data-toggle="dropdown">
-                            监控状态 <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu" >
-                            <li><a href="/open_monitor/{{ project.id }}">开启</a></li>
-                            <li><a href="/close_monitor/{{ project.id }}">关闭</a></li>
-                        </ul>
-                    </li>
-                </div>
+
                 <table class="table table-bordered">
                     <thead style="background-color: lightskyblue">
                         <tr>
@@ -70,9 +82,9 @@
                                     {{ case.is_threads }}
                                 </td>
                                 <td width="25%">
-                                    <button onclick="run_case({{ case.id }})" id="run_btn" class="btn btn-sm btn-primary">执行</button> &nbsp
+                                    <button onclick="run_case({{ case.id }})" id="run_btn_{{ case.id }}" class="btn btn-sm btn-primary">执行</button> &nbsp
                                     <button onclick="edit_case({{ case.id }})" class="btn btn-sm btn-primary">编辑</button> &nbsp
-                                    <button class="btn btn-sm btn-primary">报告</button> &nbsp
+                                    <button class="btn btn-sm btn-primary" onclick="javascript:document.location.href='/look_report/{{ case.id }}/'">报告</button> &nbsp
                                     <button onclick="del_case({{ case.id}},{{ project.id }})" type="button" class="btn btn-sm btn-danger">删除</button>
                                 </td>
                             </tr>
@@ -218,6 +230,8 @@
 
 
     </div>
+    <script src="/static/jquery-nice-select-master/js/jquery.js"></script>
+    <script src="/static/jquery-nice-select-master/js/jquery.nice-select.js"></script>
     <script>
         function add_case(pro_id) {
             const case_name = document.getElementById("case_name").value;
@@ -297,29 +311,37 @@
         }
 
         run_case = function (case_id) {
-            document.getElementById("run_btn").innerText = "执行中.."
+            document.getElementById("run_btn_"+case_id).innerText = "执行中.."
+            const host = document.getElementById("using_host").value;
+
             $.get(
                 '/run_script/'+case_id+'/',
-                {},
+                {"host":host},
                 function (ret) {
                     if (ret != 'Error'){
                         alert('执行成功');
                     }else{
                         alert('请先上传自动化脚本');
                     }
-                    document.getElementById("run_btn").innerText = "执行"
+                    document.getElementById("run_btn_"+case_id).innerText = "执行"
                 }
             )
         }
         concurrent_run = function (pro_id){
+            const host = document.getElementById("using_host").value;
             $.get(
                 '/concurrent_run/'+pro_id+'/',
-                {},
+                {"host":host},
                 function (ret){
 
                 }
             )
         }
+        $(document).ready(function() {
+            $('select').niceSelect();
+         });
+        $('select').niceSelect('update');
+        $('select').niceSelect('destory');
     </script>
 
 </body>

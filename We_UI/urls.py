@@ -32,6 +32,7 @@ urlpatterns = [
     re_path('upload/(?P<case_id>.+)/', upload_script),
     re_path('run_script/(?P<case_id>.+)/',run_script),
     re_path('concurrent_run/(?P<pro_id>.+)/',concurrent_run_script),
-    re_path('open_monitor/(?P<pro_id>.+)',open_monitor),
-    re_path('close_monitor/(?P<pro_id>.+)',close_monitor),
+    re_path('open_monitor/(?P<pro_id>.+)/',open_monitor),
+    re_path('close_monitor/(?P<pro_id>.+)/',close_monitor),
+    re_path('look_report/(?P<case_id>.+)/',look_report),
 ]

@@ -1,4 +1,5 @@
 import json
+import platform
 import re
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ from uiApp.models import *
 """
 视图逻辑层
 """
+operation = platform.system()
 
 
 # 需要先修改setting.py 才有home.html联想
@@ -60,7 +62,8 @@ def update_project(request):
 def testcases(request, pro_id):
     cases = DB_cases.objects.filter(pro_id=pro_id)
     project = list(DB_end.objects.filter(id=pro_id))[0]
-    param = {"cases": cases, "project": project}
+    hosts = project.host.split(",")
+    param = {"cases": cases, "project": project, "hosts": hosts}
     return render(request, 'case.html', param)
 
 
@@ -138,12 +141,22 @@ def del_case(request):
 def run_script(request, case_id):
     case = DB_cases.objects.filter(id=case_id)[0]
     pro_id = case.pro_id
+    case_name = case.name
     script_name = case.script
+    host = request.GET['host']
+
     # 判断是否未上传脚本文件
     if script_name in ['', ' ', None, 'None']:
         return HttpResponse('Error')
     # 执行py文件
-    subprocess.call('python3 my_client/client_%s/case/%s' % (pro_id, script_name), shell=True)
+    if operation == "Windows":
+        subprocess.call(
+            'python my_client/client_%s/case/%s %s %s %s' % (pro_id, script_name, host, script_name, case_name),
+            shell=True)
+    else:
+        subprocess.call(
+            'python3 my_client/client_%s/case/%s %s %s %s' % (pro_id, script_name, host, script_name, case_name),
+            shell=True)
     return HttpResponse('Success')
 
 
@@ -152,12 +165,15 @@ def concurrent_run_script(request, pro_id):
     # 先获取该项目下所有可以并发执行的测试用例
     cases = DB_cases.objects.filter(pro_id=pro_id, is_threads='True')
     max_threads = DB_end.objects.filter(id=pro_id)[0].max_threads
-
+    host = request.GET['host']
     # 声明执行用例方法
     def concurrent_run(case):
         if case.script not in ['', ' ', None, 'None']:
             # 执行py文件
-            subprocess.call('python3 my_client/client_%s/case/%s' % (case.pro_id, case.script), shell=True)
+            if operation == "Windows":
+                subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (case.pro_id, case.script,host, case.script,case.name), shell=True)
+            else:
+                subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (case.pro_id, case.script,host, case.script,case.name), shell=True)
             print(case, "执行完成")
 
     tf = []
@@ -188,14 +204,16 @@ def open_monitor(request, pro_id):
     except:
         # 未开启则开启监控
         def start_monitor():
-            subprocess.call('python3 uiApp/monitor.py %s WEB' % pro_id, shell=True)
+            if operation == 'Windows':
+                subprocess.call('python uiApp/monitor.py %s WEB' % pro_id, shell=True)
+            else:
+                subprocess.call('python3 uiApp/monitor.py %s WEB' % pro_id, shell=True)
 
         # 开一个新的线程进行监控
         t = threading.Thread(target=start_monitor)
         # t.setDaemon(True)  # 设置守护进程
         # 执行进程
         t.start()
-        print("+++++++++")
     return HttpResponseRedirect("/testcases/%s/" % pro_id)
 
 
@@ -206,10 +224,19 @@ def close_monitor(request, pro_id):
         process = subprocess.check_output('ps -ef | grep "monitor.py %s WEB" | grep -v grep' % pro_id, shell=True)
         print("监控已开启，现在关闭")
         # 使用正则
-        pids = re.findall(r'(\d+)',str(process))
+        pids = re.findall(r'(\d+)', str(process))
         pid = max([int(i) for i in pids])
         subprocess.call('kill -9 %s' % pid,
                         shell=True)
     except:
         print("监控尚未开启")
     return HttpResponseRedirect("/testcases/%s/" % pro_id)
+
+
+# 查看报告
+def look_report(request, case_id):
+
+    case = DB_cases.objects.filter(id=int(case_id))[0]
+    case_name = case.name
+    # 返回测试报告路径
+    return render(request, 'client_%s/report/%s.html' % (case.pro_id, case_name))
