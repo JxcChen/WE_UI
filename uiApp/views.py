@@ -51,6 +51,7 @@ def get_project_msg(request, pro_id):
 # 编辑项目
 def update_project(request):
     DB_end.objects.filter(id=request.GET['pro_id']).update(name=request.GET['pro_name'], host=request.GET['pro_host'],
+                                                           monitor_host=request.GET['monitor_host'],
                                                            check_time=request.GET['check_time'],
                                                            phone=request.GET['phone'], email=request.GET['email'],
                                                            dingtalk=request.GET['dingtalk'],
@@ -166,14 +167,17 @@ def concurrent_run_script(request, pro_id):
     cases = DB_cases.objects.filter(pro_id=pro_id, is_threads='True')
     max_threads = DB_end.objects.filter(id=pro_id)[0].max_threads
     host = request.GET['host']
+
     # 声明执行用例方法
     def concurrent_run(case):
         if case.script not in ['', ' ', None, 'None']:
             # 执行py文件
             if operation == "Windows":
-                subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (case.pro_id, case.script,host, case.script,case.name), shell=True)
+                subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
+                case.pro_id, case.script, host, case.script, case.name), shell=True)
             else:
-                subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (case.pro_id, case.script,host, case.script,case.name), shell=True)
+                subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
+                case.pro_id, case.script, host, case.script, case.name), shell=True)
             print(case, "执行完成")
 
     tf = []
@@ -196,7 +200,9 @@ def concurrent_run_script(request, pro_id):
     return HttpResponse('Success')
 
 
+# 开启监控
 def open_monitor(request, pro_id):
+    monitor_host = DB_end.objects.filter(id=pro_id)[0].monitor_host
     # 判断监控是否已经开启
     try:
         process = subprocess.check_output('ps -ef | grep "monitor.py %s WEB" | grep -v grep' % pro_id, shell=True)
@@ -211,7 +217,7 @@ def open_monitor(request, pro_id):
 
         # 开一个新的线程进行监控
         t = threading.Thread(target=start_monitor)
-        # t.setDaemon(True)  # 设置守护进程
+        t.setDaemon(True)  # 设置守护进程
         # 执行进程
         t.start()
     return HttpResponseRedirect("/testcases/%s/" % pro_id)
@@ -235,7 +241,6 @@ def close_monitor(request, pro_id):
 
 # 查看报告
 def look_report(request, case_id):
-
     case = DB_cases.objects.filter(id=int(case_id))[0]
     case_name = case.name
     # 返回测试报告路径

@@ -14,7 +14,6 @@ if operation == 'Windows':
 else:
     file_path = str(__file__).split("/")[-3]
 
-
 try:
     from public.utils import *
 except:
@@ -38,26 +37,29 @@ class Test(unittest.TestCase):
 
     def test_01(self):
         '这里是用例描述'
-        search_input = (By.ID,"kw")
+        search_input = (By.ID, "kw")
         self.driver.find_element(*search_input).send_keys("hello world")
 
     def test_02(self):
         '这里是用例描述'
-        search_input = (By.ID,"kw")
+        search_input = (By.ID, "kw")
         self.driver.find_element(*search_input).send_keys("自动化")
 
 
 if __name__ == '__main__':
-    # 获取第一个系统参数
+
     param = {}
     try:
+        # 获取第二个系统参数
         host = sys.argv[1]
         script_name = sys.argv[2]
         case_name = sys.argv[3]
-        param["script_name"] = script_name
-        param["case_name"] = case_name
-        util_run_with_report(Test, param)
+
     except:
-        util_run_with_report(Test, param)
+        host = ""  # 手动调试时输入host
+        script_name = ""  # 输入当前脚本名称
+        case_name = ""  # 输入用例名称
 
-
+    param["script_name"] = script_name
+    param["case_name"] = case_name
+    util_run_with_report(Test, param)
