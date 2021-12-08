@@ -174,10 +174,10 @@ def concurrent_run_script(request, pro_id):
             # 执行py文件
             if operation == "Windows":
                 subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
-                case.pro_id, case.script, host, case.script, case.name), shell=True)
+                    case.pro_id, case.script, host, case.script, case.name), shell=True)
             else:
                 subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
-                case.pro_id, case.script, host, case.script, case.name), shell=True)
+                    case.pro_id, case.script, host, case.script, case.name), shell=True)
             print(case, "执行完成")
 
     tf = []
@@ -245,3 +245,14 @@ def look_report(request, case_id):
     case_name = case.name
     # 返回测试报告路径
     return render(request, 'client_%s/report/%s.html' % (case.pro_id, case_name))
+
+
+# 下载本地调试包
+def download_client(request, pro_id):
+    # 1 获取到本地调试包名称
+    # 2 删除旧的调试压缩包
+    # 3 将最新的调试包进行打包压缩
+    # 4 封装响应  响应体 头
+    # 5 删除调试压缩包
+    # 6 返回响应
+    pass
