@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/jquery-nice-select-master/css/nice-select.css">
+
 </head>
 
 <body>
@@ -30,14 +31,24 @@
 
 
                 <div class="dropdown" style="margin: 20px 0 10px">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="position: relative; top: 30px">
-                    监控状态
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="/open_monitor/{{ project.id }}">开启</a></li>
-                    <li><a href="/close_monitor/{{ project.id }}">关闭</a></li>
-                  </ul>
+                   <button class="btn btn-default">用例管理</button> <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li>
+						 <a href="/open_monitor/{{ project.id }}">开启监控</a>
+					</li>
+					<li class="disabled">
+						 <a href="/close_monitor/{{ project.id }}">关闭监控</a>
+					</li>
+                    <li><a href="#">下载调试包</a></li>
+
+					<li>
+						 <a href="#">上传public包</a>
+					</li>
+				</ul>
+
+
+
+
                   <div align="right">
                     <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_case_form").style.display="block"'>添加用例</button>
                     <button class="btn btn-primary btn-sm" onclick='concurrent_run({{ project.id }})'>并发执行</button>
