@@ -29,8 +29,7 @@ class Test(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # cls.driver.quit()
-        pass
+        cls.driver.quit()
 
     def setUp(self):
         util_get_index_page(self, host)

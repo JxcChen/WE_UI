@@ -4,10 +4,17 @@ import re
 import shutil
 import subprocess
 import threading
+import time
+import zipfile
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from uiApp.models import *
+from docx import *
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import RGBColor
+
+
 
 # Create your views here.
 
@@ -15,6 +22,10 @@ from uiApp.models import *
 视图逻辑层
 """
 operation = platform.system()
+
+
+def login(request):
+    return render(request,'login.html')
 
 
 # 需要先修改setting.py 才有home.html联想
@@ -247,12 +258,156 @@ def look_report(request, case_id):
     return render(request, 'client_%s/report/%s.html' % (case.pro_id, case_name))
 
 
+# 查看报告总结
+def look_report_summary(request, pro_id=''):
+    # 获取项目对应的全部用例
+    pro_name = DB_end.objects.filter(id=pro_id)[0].name
+    cases = list(DB_cases.objects.filter(pro_id=pro_id).values())
+    # 声明结果变量
+    res = '【%s项目用例总结】\n' % pro_name
+    total_case = 0;
+    pass_case = 0
+    fail_case = 0
+    # 存放错误用例名称
+    fail_case_list = []
+    # 遍历用例报告获取总结数据
+    for case in cases:
+        try:
+            with open(r'my_client/client_%s/report/%s.html' % (pro_id,case['name']),'r') as f:
+                # 读取报告内容
+                content = f.read()
+                # 使用正则匹配结果
+                results = re.findall(r"<td name='sum'>(.*?)</td>",content)
+                total_case += int(results[0])
+                pass_case += int(results[1])
+                fail_or_error = int(results[2]) + int(results[3])
+                fail_case += fail_or_error
+                if fail_or_error>0:
+                    fail_case_list.append(case['name'])
+        except Exception as e:
+            raise e
+    res += "当前总共有【%s】条用例。\n通过用例数：%s 失败用例数：%s\n" % (str(total_case),str(pass_case),str(fail_case))
+    res += "失败用例名称：" + "," .join(fail_case_list)+"\n"
+    res += "想查看用例结果详情可以点击用例后的报告按钮"
+    return HttpResponse(res)
+
+
+# 导出测试报告 word格式
+def export_report(request,pro_id):
+    # 直接调用获取报告函数
+    httpresponse = look_report_summary(request, pro_id=pro_id)
+    project = DB_end.objects.filter(id=pro_id)[0]
+
+    # 创建word文档
+    doc = Document()
+    doc.styles['Normal'].font.name = '微软雅黑'
+
+    # 写标题
+    p = doc.add_paragraph('【%s 的自动化测试报告】' % project.name)
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 居中
+
+    p = doc.add_paragraph('')
+    p.add_run('本测试报告由xxx的web自动化平台:xxxxxx生成,地址:xxxxxx').font.color.rgb = RGBColor(*(172, 182, 182))
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 居中
+
+    p = doc.add_paragraph('')
+    p.add_run('报告生成时间: %s' % time.strftime('%Y-%m-%d %H:%M:%s')).font.color.rgb = RGBColor(*(172, 182, 182))
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 居中
+
+    doc.add_paragraph('报告人: %s' % request.user.username, style='Intense Quote')
+    doc.add_paragraph('平台维护: %s' % '测试开发干货', style='Intense Quote')
+    doc.add_paragraph('执行环境: %s' % 'http://', style='Intense Quote')
+
+    doc.add_paragraph('用例执行结果总览如下:', style='Intense Quote')
+
+    p = doc.add_paragraph(httpresponse.content.decode())
+    p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    doc.add_paragraph('用例执行结果传送门如下:', style='Intense Quote')
+
+    # 获取所有报告的详情地址并展示到word中
+    cases = DB_cases.objects.filter(pro_id=pro_id)
+    for i in cases:
+        doc.add_paragraph('用例名字:' + str(i.name))
+        doc.add_paragraph('脚本名字:' + str(i.script))
+        doc.add_paragraph('报告地址:' + 'http://xxxx:8000/look_report/' + str(i.id) + '/')
+        doc.add_paragraph(' ', style='Intense Quote')
+
+    # 保存并下载
+    file_name = 'TESTREPORTS_%s.docx' % time.strftime('%Y-%m-%d %H:%M:%s')
+    doc.save(file_name)
+    with open(file_name, 'rb') as fp:
+        response = HttpResponse(fp)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="%s"' % file_name
+
+    os.remove(file_name)
+
+    return response
+
+
+# 压缩函数
+def get_zip_file(input_path, result):
+    """
+    对目录进行深度优先遍历
+    :param input_path:
+    :param result:
+    :return:
+    """
+    files = os.listdir(input_path)
+    for file in files:
+        if os.path.isdir(input_path + '/' + file):
+            get_zip_file(input_path + '/' + file, result)
+        else:
+            result.append(input_path + '/' + file)
+
+
+def zip_file_path(input_path, output_path, output_name):
+    """
+    压缩文件
+    :param input_path: 压缩的文件夹路径
+    :param output_path: 解压（输出）的路径
+    :param output_name: 压缩包名称
+    :return:
+    """
+    f = zipfile.ZipFile(output_path + '/' + output_name, 'w', zipfile.ZIP_DEFLATED)
+    filelists = []
+    get_zip_file(input_path, filelists)
+    for file in filelists:
+        f.write(file)
+    # 调用了close方法才会保证完成压缩
+    f.close()
+
+
 # 下载本地调试包
 def download_client(request, pro_id):
     # 1 获取到本地调试包名称
+    zip_file_name = "client_%s.zip" % pro_id
+    file_dir = "my_client/client_%s" % pro_id
     # 2 删除旧的调试压缩包
-    # 3 将最新的调试包进行打包压缩
+    try:
+        os.remove("my_client/" + zip_file_name)
+    except:
+        pass
+    # 3 将最新的调试包进行打包压缩  调用函数
+    zip_file_path(file_dir, "my_client", zip_file_name)
     # 4 封装响应  响应体 头
+    # 先以读方式打开文件
+    try:
+        file = open("my_client/" + zip_file_name, 'rb')
+    except:
+        # 没有找到代表没有这个文件
+        return HttpResponse('')
+    response = HttpResponse(file)
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="%s"' % zip_file_name
     # 5 删除调试压缩包
+    try:
+        os.remove("my_client/" + zip_file_name)
+    except:
+        pass
     # 6 返回响应
-    pass
+    return response
+
+
+

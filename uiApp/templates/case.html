@@ -36,13 +36,19 @@
 					<li>
 						 <a href="/open_monitor/{{ project.id }}">开启监控</a>
 					</li>
-					<li class="disabled">
+					<li>
 						 <a href="/close_monitor/{{ project.id }}">关闭监控</a>
 					</li>
-                    <li><a href="#">下载调试包</a></li>
+                    <li><a href="/download_test_script/{{ project.id }}">下载调试包</a></li>
 
 					<li>
 						 <a href="#">上传public包</a>
+					</li>
+                    <li>
+						 <button onclick="look_report_summary({{ project.id }})">查看报告总结</button>
+					</li>
+                    <li>
+						 <a href="/export_report/{{ project.id }}">导出报告总结</a>
 					</li>
 				</ul>
 
@@ -353,6 +359,18 @@
          });
         $('select').niceSelect('update');
         $('select').niceSelect('destory');
+
+
+        look_report_summary = function (pro_id) {
+            $.get(
+                '/look_report_summary/'+pro_id,
+                {},
+                function (ret) {
+                    alert(ret)
+                }
+            )
+        }
+
     </script>
 
 </body>

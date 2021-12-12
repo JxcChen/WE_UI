@@ -440,10 +440,10 @@ a.popup_link:hover {
 %(test_list)s
 <tr id='total_row'>
     <td>Total</td>
-    <td>%(count)s</td>
-    <td>%(Pass)s</td>
-    <td>%(fail)s</td>
-    <td>%(error)s</td>
+    <td name='sum'>%(count)s</td>
+    <td name='sum'>%(Pass)s</td>
+    <td name='sum'>%(fail)s</td>
+    <td name='sum'>%(error)s</td>
     <td>&nbsp;</td>
 </tr>
 </table>
