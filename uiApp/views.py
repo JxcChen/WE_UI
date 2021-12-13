@@ -13,6 +13,7 @@ from uiApp.models import *
 from docx import *
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import RGBColor
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 # Create your views here.
 
@@ -71,10 +72,20 @@ def update_project(request):
 # 进入项目测试用例页面
 def testcases(request, pro_id):
     case_name = request.GET.get('case_name', '')  # 获取搜索的用例名称
-    cases = DB_cases.objects.filter(pro_id=pro_id, name__contains=case_name)
+    cases = list(DB_cases.objects.filter(pro_id=pro_id, name__contains=case_name))
+    # 将cases进行分页处理  每页5条数据
+    p = Paginator(cases, 5)
+    # 获取前端传回来的页数
+    current_page = request.GET.get('current_page')
+    try:
+        page_cases = p.page(current_page)  # 获取当前页的测试用例
+    except PageNotAnInteger:
+        page_cases = p.page(1)  # 页数非整数时直接返回第一页
+    except EmptyPage:
+        page_cases = p.page(1)  # 页数为空时返回第一页
     project = list(DB_end.objects.filter(id=pro_id))[0]
     hosts = project.host.split(",")
-    param = {"cases": cases, "project": project, "hosts": hosts}
+    param = {"cases": page_cases, "project": project, "hosts": hosts, 'key_word': case_name}
     return render(request, 'case.html', param)
 
 
@@ -272,7 +283,7 @@ def look_report_summary(request, pro_id=''):
     # 遍历用例报告获取总结数据
     for case in cases:
         try:
-            with open(r'my_client/client_%s/report/%s.html' % (pro_id, case['name']), 'r') as f:
+            with open(r'my_client/client_%s/report/%s.html' % (pro_id, case['name']), 'r', encoding='utf-8') as f:
                 # 读取报告内容
                 content = f.read()
                 # 使用正则匹配结果
@@ -283,6 +294,9 @@ def look_report_summary(request, pro_id=''):
                 fail_case += fail_or_error
                 if fail_or_error > 0:
                     fail_case_list.append(case['name'])
+        except FileNotFoundError as e:
+            # 如果没找到文件的话表示该用例还未执行  直接跳过即可
+            continue
         except Exception as e:
             raise e
     res += "当前总共有【%s】条用例。\n通过用例数：%s 失败用例数：%s\n" % (str(total_case), str(pass_case), str(fail_case))
@@ -407,3 +421,18 @@ def download_client(request, pro_id):
         pass
     # 6 返回响应
     return response
+
+
+# 上传public-utils
+def upload_public_utils(request, pro_id):
+    # 获取页面传回来的文件
+    utils_file = request.FILES.get("utils_file", None)
+    file_name = str(utils_file)
+    if not utils_file:
+        return HttpResponseRedirect('/testcases/' + pro_id)
+    new_file_name = 'my_client/client_%s/public/%s' % (pro_id, file_name)
+    # 读取传回来的文件写到新文件中
+    with open(new_file_name, 'wb+') as f:
+        for content in utils_file.chunks():
+            f.write(content)
+    return HttpResponseRedirect('/testcases/' + pro_id)

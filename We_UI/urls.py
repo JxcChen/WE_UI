@@ -18,7 +18,7 @@ from django.urls import path, re_path
 from uiApp.views import *
 
 urlpatterns = [
-    path('login/',login),
+    path('login/', login),
     path('admin/', admin.site.urls),
     path('home/', home),
     path('save_end/', save_end),
@@ -29,14 +29,15 @@ urlpatterns = [
     re_path('update_case/(?P<pro_id>.+)/', update_case),
     path('del_case/', del_case),  # 没有待正则的不需要使用re_path
     re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),
-    path('update_project/',update_project),
+    path('update_project/', update_project),
     re_path('upload/(?P<case_id>.+)/', upload_script),
-    re_path('run_script/(?P<case_id>.+)/',run_script),
-    re_path('concurrent_run/(?P<pro_id>.+)/',concurrent_run_script),
-    re_path('open_monitor/(?P<pro_id>.+)/',open_monitor),
-    re_path('close_monitor/(?P<pro_id>.+)/',close_monitor),
-    re_path('look_report/(?P<case_id>.+)/',look_report),
-    re_path('download_test_script/(?P<pro_id>.+)',download_client),
-    re_path('look_report_summary/(?P<pro_id>.+)',look_report_summary),
-    re_path('export_report/(?P<pro_id>.+)',export_report)
+    re_path('run_script/(?P<case_id>.+)/', run_script),
+    re_path('concurrent_run/(?P<pro_id>.+)/', concurrent_run_script),
+    re_path('open_monitor/(?P<pro_id>.+)/', open_monitor),
+    re_path('close_monitor/(?P<pro_id>.+)/', close_monitor),
+    re_path('look_report/(?P<case_id>.+)/', look_report),
+    re_path('download_test_script/(?P<pro_id>.+)', download_client),
+    re_path('look_report_summary/(?P<pro_id>.+)', look_report_summary),
+    re_path('export_report/(?P<pro_id>.+)', export_report),
+    re_path('upload_utils/(?P<pro_id>.+)', upload_public_utils),
 ]

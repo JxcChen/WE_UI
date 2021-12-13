@@ -42,7 +42,11 @@
                         <li><a href="/download_test_script/{{ project.id }}">下载调试包</a></li>
 
                         <li>
-                             <a href="#">上传public包</a>
+                            <form action="/upload_utils/{{ project.id }}" method="post" enctype="multipart/form-data">
+                                <input type="file" name="utils_file">
+                                <input type="submit" value="上传public脚本" >
+                            </form>
+
                         </li>
                         <li>
                              <button onclick="look_report_summary({{ project.id }})">查看报告总结</button>
@@ -59,7 +63,7 @@
                   </div>
                 </div>
                 <form action="/testcases/{{ project.id }}">
-                    <input type="text" placeholder="输入用例名称" name="case_name">&nbsp
+                    <input type="text" placeholder="输入用例名称" name="case_name" value="{{ key_word }}">&nbsp
                     <input type="submit" class="btn btn-success" value="搜索">
                 </form>
 
@@ -243,6 +247,33 @@
                     </div>
                 </form>
             </div>
+
+            <ul style="float: right" class="pagination">
+
+                    <li>
+                        {% if cases.has_previous %}
+                            <a href="/testcases/{{ project.id }}?current_page={{ cases.previous_page_number }}">上一页</a>
+                        {% else %}
+                            <a disabled="true" href="#">上一页</a>
+                        {% endif %}
+                    </li>
+
+
+                {% for page in cases.paginator.page_range %}
+                    <li>
+                     <a href="/testcases/{{ project.id }}?current_page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+                <li>
+                    {% if cases.has_next %}
+                        <a href="/testcases/{{ project.id }}?current_page={{ cases.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a style="" disabled="true" href="#">下一页</a>
+                    {% endif %}
+                </li>
+
+            </ul>
         </div>
 
 
