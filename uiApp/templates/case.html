@@ -32,27 +32,25 @@
 
                 <div class="dropdown" style="margin: 20px 0 10px">
                    <button class="btn btn-default">用例管理</button> <button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-				<ul class="dropdown-menu">
-					<li>
-						 <a href="/open_monitor/{{ project.id }}">开启监控</a>
-					</li>
-					<li>
-						 <a href="/close_monitor/{{ project.id }}">关闭监控</a>
-					</li>
-                    <li><a href="/download_test_script/{{ project.id }}">下载调试包</a></li>
+				    <ul class="dropdown-menu">
+                        <li>
+                             <a href="/open_monitor/{{ project.id }}">开启监控</a>
+                        </li>
+                        <li>
+                             <a href="/close_monitor/{{ project.id }}">关闭监控</a>
+                        </li>
+                        <li><a href="/download_test_script/{{ project.id }}">下载调试包</a></li>
 
-					<li>
-						 <a href="#">上传public包</a>
-					</li>
-                    <li>
-						 <button onclick="look_report_summary({{ project.id }})">查看报告总结</button>
-					</li>
-                    <li>
-						 <a href="/export_report/{{ project.id }}">导出报告总结</a>
-					</li>
-				</ul>
-
-
+                        <li>
+                             <a href="#">上传public包</a>
+                        </li>
+                        <li>
+                             <button onclick="look_report_summary({{ project.id }})">查看报告总结</button>
+                        </li>
+                        <li>
+                             <a href="/export_report/{{ project.id }}">导出报告总结</a>
+                        </li>
+				    </ul>
 
 
                   <div align="right">
@@ -60,7 +58,10 @@
                     <button class="btn btn-primary btn-sm" onclick='concurrent_run({{ project.id }})'>并发执行</button>
                   </div>
                 </div>
-
+                <form action="/testcases/{{ project.id }}">
+                    <input type="text" placeholder="输入用例名称" name="case_name">&nbsp
+                    <input type="submit" class="btn btn-success" value="搜索">
+                </form>
 
                 <table class="table table-bordered">
                     <thead style="background-color: lightskyblue">

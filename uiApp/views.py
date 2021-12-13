@@ -14,8 +14,6 @@ from docx import *
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import RGBColor
 
-
-
 # Create your views here.
 
 """
@@ -25,7 +23,7 @@ operation = platform.system()
 
 
 def login(request):
-    return render(request,'login.html')
+    return render(request, 'login.html')
 
 
 # 需要先修改setting.py 才有home.html联想
@@ -72,7 +70,8 @@ def update_project(request):
 
 # 进入项目测试用例页面
 def testcases(request, pro_id):
-    cases = DB_cases.objects.filter(pro_id=pro_id)
+    case_name = request.GET.get('case_name', '')  # 获取搜索的用例名称
+    cases = DB_cases.objects.filter(pro_id=pro_id, name__contains=case_name)
     project = list(DB_end.objects.filter(id=pro_id))[0]
     hosts = project.host.split(",")
     param = {"cases": cases, "project": project, "hosts": hosts}
@@ -273,27 +272,27 @@ def look_report_summary(request, pro_id=''):
     # 遍历用例报告获取总结数据
     for case in cases:
         try:
-            with open(r'my_client/client_%s/report/%s.html' % (pro_id,case['name']),'r') as f:
+            with open(r'my_client/client_%s/report/%s.html' % (pro_id, case['name']), 'r') as f:
                 # 读取报告内容
                 content = f.read()
                 # 使用正则匹配结果
-                results = re.findall(r"<td name='sum'>(.*?)</td>",content)
+                results = re.findall(r"<td name='sum'>(.*?)</td>", content)
                 total_case += int(results[0])
                 pass_case += int(results[1])
                 fail_or_error = int(results[2]) + int(results[3])
                 fail_case += fail_or_error
-                if fail_or_error>0:
+                if fail_or_error > 0:
                     fail_case_list.append(case['name'])
         except Exception as e:
             raise e
-    res += "当前总共有【%s】条用例。\n通过用例数：%s 失败用例数：%s\n" % (str(total_case),str(pass_case),str(fail_case))
-    res += "失败用例名称：" + "," .join(fail_case_list)+"\n"
+    res += "当前总共有【%s】条用例。\n通过用例数：%s 失败用例数：%s\n" % (str(total_case), str(pass_case), str(fail_case))
+    res += "失败用例名称：" + ",".join(fail_case_list) + "\n"
     res += "想查看用例结果详情可以点击用例后的报告按钮"
     return HttpResponse(res)
 
 
 # 导出测试报告 word格式
-def export_report(request,pro_id):
+def export_report(request, pro_id):
     # 直接调用获取报告函数
     httpresponse = look_report_summary(request, pro_id=pro_id)
     project = DB_end.objects.filter(id=pro_id)[0]
@@ -408,6 +407,3 @@ def download_client(request, pro_id):
         pass
     # 6 返回响应
     return response
-
-
-
