@@ -18,7 +18,8 @@ from django.urls import path, re_path
 from uiApp.views import *
 
 urlpatterns = [
-    path('login/', login),
+    path('login/', to_login),
+    path('user_login/',login),
     path('admin/', admin.site.urls),
     path('home/', home),
     path('save_end/', save_end),

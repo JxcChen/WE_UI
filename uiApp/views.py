@@ -22,9 +22,16 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 """
 operation = platform.system()
 
+def to_login(request):
+    return render(request, 'login.html')
+
 
 def login(request):
-    return render(request, 'login.html')
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    result = len(DB_users.objects.filter(username=username, password=password))
+
 
 
 # 需要先修改setting.py 才有home.html联想

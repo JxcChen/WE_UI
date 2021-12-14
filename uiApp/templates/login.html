@@ -142,16 +142,16 @@
 		<div class="demo form-bg" style="padding: 20px 0;">
 		        <div class="container">
 		            <div class="row">
-		                <div class="col-md-offset-3 col-md-6">
+		                <div class="col-md-offset-3 col-md-6" >
                             <h1 style="text-align: center;color: #1b1b86">欢迎使用UI自动化平台</h1>
-		                    <form class="form-horizontal">
+		                    <form class="form-horizontal" id="login_form" method="post">
 		                        <span class="heading">用户登录</span>
 		                        <div class="form-group">
-		                            <input type="email" class="form-control" id="inputEmail3" placeholder="用户名或电子邮件">
+		                            <input type="text" class="form-control" id="inputEmail3" name="username" placeholder="用户名或电子邮件">
 		                            <i class="fa fa-user"></i>
 		                        </div>
 		                        <div class="form-group help">
-		                            <input type="password" class="form-control" id="inputPassword3" placeholder="密　码">
+		                            <input type="password" class="form-control" id="inputPassword3" name="password" placeholder="密　码">
 		                            <i class="fa fa-lock"></i>
 		                            <a href="#" class="fa fa-question-circle"></a>
 		                        </div>
@@ -161,7 +161,7 @@
 		                                <label for="checkbox1"></label>
 		                            </div>
 		                            <span class="text">Remember me</span>
-		                            <button type="submit" class="btn btn-default">登录</button>
+		                            <button onclick="login()" class="btn btn-default">登录</button>
 		                        </div>
 		                    </form>
 		                </div>
@@ -171,4 +171,11 @@
 
 	</div>
 </body>
+<script type="text/javascript">
+    function login() {
+        const form = document.getElementById('login_form')
+        form.action='/user_login/'
+        form.submit()
+    }
+</script>
 </html>
