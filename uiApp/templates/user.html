@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+	<script type="text/javascript" src="/static/jquery-3.5.1/jquery-3.5.1.js"></script>
+</head>
+<body>
+
+    {% include 'new_menu.html' %}
+
+     <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column" style="position: relative">
+                <div align="right">
+                    <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_member_form").style.display="block"'>添加成员</button>
+                </div>
+                <table class="table" style="width: 1200px;" align="center">
+                    <thead>
+                        <tr>
+                            <th>
+                                编号
+                            </th>
+                            <th>
+                                用户名
+                            </th>
+                            <th>
+                                邮箱
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr bgcolor="#f0f8ff" style="box-shadow: 4px 4px 6px">
+                                <td>
+                                    {{ user.id }}
+                                </td>
+                                <td>
+                                    {{ user.username}}
+                                </td>
+                                <td>
+                                    {{ user.email}}
+                                </td>
+                                <td>
+                                    <a href="#">编辑</a>
+                                    <a href="#">删除</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                 <form id="add_member_form" class="form-horizontal" role="form"
+                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center"
+                 action="/add_member/" method="post">
+                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">
+                         <label class="col-sm-2 control-label">成员名称</label>
+                        <div class="input-group" style="width: 300px">
+                          <input name="username"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">成员密码</label>
+                        <div class="input-group" style="width: 300px">
+                          <input name="password"  type="password" class="form-control" placeholder="请输入密码" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">确定</button>
+                            <input type="button" onclick="javascript:document.getElementById('add_member_form').style.display='none'" class="btn btn-default" value="取消">
+                        </div>
+                    </div>
+                </form>
+
+                <form id="add_member_form" class="form-horizontal" role="form"
+                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center"
+                 action="/add_member/" method="post">
+                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">
+                         <label class="col-sm-2 control-label">成员名称</label>
+                        <div class="input-group" style="width: 300px">
+                          <input name="username"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">成员密码</label>
+                        <div class="input-group" style="width: 300px">
+                          <input name="password"  type="password" class="form-control" placeholder="请输入密码" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button  onclick="login()"  class="btn btn-default">确定</button> <spam id="error_msg"></spam>
+                            <input type="button" onclick="javascript:document.getElementById('add_member_form').style.display='none'" class="btn btn-default" value="取消">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+     </div>
+</body>
+<script type="text/javascript">
+    function login(){
+        const username = document.getElementsByName('username');
+        const password = document.getElementsByName('password');
+        $.post(
+            '/add_member/',
+            {'username':password,'password',password},
+            function (ret){
+                document.getElementById('error_msg').value=ret
+            }
+        )
+    }
+</script>
+</html>

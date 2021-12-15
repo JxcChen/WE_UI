@@ -18,7 +18,12 @@ from django.urls import path, re_path
 from uiApp.views import *
 
 urlpatterns = [
-    path('login/', login),
+    path('login/', to_login),
+    path('user_login/', login),
+    path('login_no_user/', login_no_user),
+    path('login_pwd_error/', login_pwd_error),
+    path('logout/',logout),
+    path('accounts/login/',to_login),
     path('admin/', admin.site.urls),
     path('home/', home),
     path('save_end/', save_end),
@@ -40,4 +45,6 @@ urlpatterns = [
     re_path('look_report_summary/(?P<pro_id>.+)', look_report_summary),
     re_path('export_report/(?P<pro_id>.+)', export_report),
     re_path('upload_utils/(?P<pro_id>.+)', upload_public_utils),
+    path('user_list/',user_list),
+    path('add_member/',add_user)
 ]

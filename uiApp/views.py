@@ -7,6 +7,7 @@ import threading
 import time
 import zipfile
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from uiApp.models import *
@@ -14,6 +15,8 @@ from docx import *
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import RGBColor
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib import auth
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -23,11 +26,63 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 operation = platform.system()
 
 
+def to_login(request):
+    next_url = request.GET.get('next')
+    return render(request, 'login.html', {'next': next_url})
+
+
 def login(request):
-    return render(request, 'login.html')
+    next_url = request.GET.get('next', '/home/')
+    print(next_url)
+    if next_url == '' or next_url == 'None':
+        next_url = '/home/'
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    # authenticate 有就返回对象 没有就返回none
+    username_check = len(User.objects.filter(username=username))
+    if username_check == 0:
+        return HttpResponseRedirect("/login_no_user/")
+    user = auth.authenticate(username=username, password=password)
+    if not user:
+        return HttpResponseRedirect("/login_pwd_error/")
+    auth.login(request, user)
+    request.session['user'] = username
+    return HttpResponseRedirect(next_url)
+
+
+def login_no_user(request):
+    return render(request, 'login.html', {'error_msg': "该用户不存在"})
+
+
+def login_pwd_error(request):
+    return render(request, 'login.html', {'error_msg': "密码错误"})
+
+
+# 退出功能
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect('/login/')
+
+
+def user_list(request):
+    users = list(User.objects.all().values())
+    return render(request, 'user.html', {'users': users})
+
+
+def add_user(request):
+    username = request.POST.get('username')
+    pwd = request.POST.get('password')
+    try:
+        user = User.objects.create_user(username=username, password=pwd)
+        user.save()
+    except:
+        return HttpResponse('用户名已存在')
+    return HttpResponseRedirect('/user_list/')
 
 
 # 需要先修改setting.py 才有home.html联想
+@login_required()
 def home(request):
     res = {'end': DB_end.objects.all(), 'href': DB_href.objects.all()}
     return render(request, 'home.html', res)
@@ -70,6 +125,7 @@ def update_project(request):
 
 
 # 进入项目测试用例页面
+@login_required
 def testcases(request, pro_id):
     case_name = request.GET.get('case_name', '')  # 获取搜索的用例名称
     cases = list(DB_cases.objects.filter(pro_id=pro_id, name__contains=case_name))
@@ -269,6 +325,7 @@ def look_report(request, case_id):
 
 
 # 查看报告总结
+@login_required
 def look_report_summary(request, pro_id=''):
     # 获取项目对应的全部用例
     pro_name = DB_end.objects.filter(id=pro_id)[0].name

@@ -40,12 +40,23 @@
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        监控管理 <b class="caret"></b>
+                        成员管理 <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">并发执行用例</a></li>
+                        <li><a href="/user_list/">成员列表</a></li>
+                        <li><a href="#">添加成员</a></li>
 
                     </ul>
+                <li class="dropdown">
+                <li >
+                    <a style="margin-left: 1000px;color: #a59e9e" disabled="True" href="#" >
+                        当前用户：{{ user }}
+                    </a>
+                </li>
+                <li>
+                    <a href="/logout/" >
+                       退出
+                    </a>
                 </li>
             </ul>
         </div>
