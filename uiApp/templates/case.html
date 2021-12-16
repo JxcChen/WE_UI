@@ -367,7 +367,7 @@
                 '/run_script/'+case_id+'/',
                 {"host":host},
                 function (ret) {
-                    if (ret != 'Error'){
+                    if (ret !== 'Error'){
                         alert('执行成功');
                     }else{
                         alert('请先上传自动化脚本');

@@ -81,6 +81,28 @@ def add_user(request):
     return HttpResponseRedirect('/user_list/')
 
 
+# 获取用户信息
+def get_user_msg(request,user_id):
+    user = list(User.objects.filter(id=user_id).values())[0]
+    res = {"username":user['username'],"email":user['email']}
+    return HttpResponse(json.dumps(res), content_type="application/json")
+
+
+# 修改成员信息
+def edit_user(request):
+    user_id = request.POST.get('id')
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    user = list(User.objects.filter(id=int(user_id)).values())[0]
+
+    if user['username'] != username and len(User.objects.filter(username=username)) > 0:
+        return HttpResponse('error')
+    else:
+        User.objects.filter(id=user_id).update(username=username, email=email)
+        return HttpResponse('success')
+
+
+
 # 需要先修改setting.py 才有home.html联想
 @login_required()
 def home(request):

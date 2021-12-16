@@ -46,5 +46,7 @@ urlpatterns = [
     re_path('export_report/(?P<pro_id>.+)', export_report),
     re_path('upload_utils/(?P<pro_id>.+)', upload_public_utils),
     path('user_list/',user_list),
-    path('add_member/',add_user)
+    path('add_member/',add_user),
+    re_path('get_edit_member_msg/(?P<user_id>.+)',get_user_msg),
+    path('edit_member/',edit_user)
 ]
