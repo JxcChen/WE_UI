@@ -131,7 +131,12 @@
             '/add_member/',
             {'username':username,'password':password},
             function (ret){
-                document.getElementById('error_msg').value=ret
+                if (ret === 'error'){
+                    document.getElementById('error_msg').value='用户名已存在';
+                }else{
+                    document.location.reload();
+                }
+
             }
         )
     }

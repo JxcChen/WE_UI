@@ -75,16 +75,15 @@ def add_user(request):
     pwd = request.POST.get('password')
     try:
         user = User.objects.create_user(username=username, password=pwd)
-        user.save()
     except:
-        return HttpResponse('用户名已存在')
-    return HttpResponseRedirect('/user_list/')
+        return HttpResponse('error')
+    return HttpResponse('success')
 
 
 # 获取用户信息
-def get_user_msg(request,user_id):
+def get_user_msg(request, user_id):
     user = list(User.objects.filter(id=user_id).values())[0]
-    res = {"username":user['username'],"email":user['email']}
+    res = {"username": user['username'], "email": user['email']}
     return HttpResponse(json.dumps(res), content_type="application/json")
 
 
@@ -100,7 +99,6 @@ def edit_user(request):
     else:
         User.objects.filter(id=user_id).update(username=username, email=email)
         return HttpResponse('success')
-
 
 
 # 需要先修改setting.py 才有home.html联想
@@ -243,6 +241,7 @@ def run_script(request, case_id):
     pro_id = case.pro_id
     case_name = case.name
     script_name = case.script
+    retry_count = case.retry_count
     host = request.GET['host']
 
     # 判断是否未上传脚本文件
@@ -251,11 +250,13 @@ def run_script(request, case_id):
     # 执行py文件
     if operation == "Windows":
         subprocess.call(
-            'python my_client/client_%s/case/%s %s %s %s' % (pro_id, script_name, host, script_name, case_name),
+            'python my_client/client_%s/case/%s %s %s %s %s' % (
+                pro_id, script_name, host, script_name, case_name, str(retry_count)),
             shell=True)
     else:
         subprocess.call(
-            'python3 my_client/client_%s/case/%s %s %s %s' % (pro_id, script_name, host, script_name, case_name),
+            'python3 my_client/client_%s/case/%s %s %s %s %s' % (
+                pro_id, script_name, host, script_name, case_name, str(retry_count)),
             shell=True)
     return HttpResponse('Success')
 
