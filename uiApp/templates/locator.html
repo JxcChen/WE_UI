@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>定位器管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css">
+	<script type="text/javascript" src="/static/jquery-3.5.1/jquery-3.5.1.js"></script>
+
+</head>
+<body>
+
+    {% include 'new_menu.html' %}
+
+     <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column" style="position: relative">
+                <div class="dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      项目选择
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      {% for pro in projects %}
+                        <li><a href="/locator_list/{{ pro.id }}">{{ pro.name }}</a></li>
+                      {% endfor %}
+                  </ul>
+                </div>
+                <div align="right">
+
+                    <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_member_form").style.display="block"'>添加定位器</button>
+                </div>
+                <table class="table" style="width: 1200px;" align="center">
+                    <thead>
+                        <tr>
+                            <th>
+                                编号
+                            </th>
+                            <th>
+                                所属页面
+                            </th>
+                            <th>
+                                元素名称
+                            </th>
+                            <th>
+                                元素详情
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for locator in locators %}
+                            <tr bgcolor="#f0f8ff" style="box-shadow: 4px 4px 6px">
+                                <td>
+                                    {{ locator.id }}
+                                </td>
+                                <td>
+                                    {{ locator.page}}
+                                </td>
+                                <td>
+                                    {{ locator.name}}
+                                </td>
+                                <td>
+                                    {{ locator.tmp_value}}
+                                </td>
+                                <td>
+                                     <input type="button" class="btn btn-default" onclick="get_edit_member_msg({{ user.id }})" value="编辑">
+                                    <button class="btn btn-danger">删除</button>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <form id="add_member_form" class="form-horizontal" role="form"
+                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" method="post">
+                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">
+                         <label class="col-sm-2 control-label">名称</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_name"  type="sele" class="form-control" placeholder="请输入名称" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">值</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_value"  type="text" class="form-control" placeholder="请输入定位器值" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">所属页面</label>
+                        <div class="input-group" style="width: 300px">
+                            <select id="loc_page" id="page_select" >
+                                <option value="">请选择所属页面</option>
+                                {% for p in pages %}
+                                    <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button  onclick="add_locator({{ project.id }})"  class="btn btn-default">确定</button> <spam id="error_msg"></spam>
+                            <input type="button" onclick="javascript:document.getElementById('add_member_form').style.display='none'" class="btn btn-default" value="取消">
+                        </div>
+                    </div>
+                </form>
+
+{#                <form id="edit_member_form" class="form-horizontal" role="form"#}
+{#                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;#}
+{#                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center"#}
+{#                >#}
+{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">#}
+{#                         <label class="col-sm-2 control-label">成员名称</label>#}
+{#                        <div class="input-group" style="width: 300px">#}
+{#                          <input name="edit_username" id="edit_username"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">#}
+{#                         <label class="col-sm-2 control-label">成员邮箱</label>#}
+{#                        <div class="input-group" style="width: 300px">#}
+{#                          <input name="edit_email" id="edit_email"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px;">#}
+{#                         <label class="col-sm-2 control-label">成员id</label>#}
+{#                        <div class="input-group" style="width: 300px">#}
+{#                          <input name="edit_id" id="edit_id"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{##}
+{##}
+{#                    <div class="form-group" style="margin-left: 40px;">#}
+{#                        <div class="col-sm-offset-2 col-sm-10">#}
+{#                            <button  onclick="edit_member()"  class="btn btn-default">确定</button> <spam id="error_msg"></spam>#}
+{#                            <input type="button" onclick="javascript:document.getElementById('edit_member_form').style.display='none'" class="btn btn-default" value="取消">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </form>#}
+            </div>
+        </div>
+     </div>
+
+</body>
+<script type="text/javascript">
+    function add_locator(pro_id){
+        const loc_name = document.getElementById('loc_name').value;
+        const loc_value = document.getElementById('loc_value').value;
+        const loc_page = $("#loc_page option:selected").val()
+        $.post(
+            '/add_locator/'+pro_id,
+            {'loc_name':loc_name,'loc_value':loc_value,'loc_page':loc_page},
+            function (ret){
+                if (ret === 'error'){
+                    document.getElementById('error_msg').value='用户名已存在';
+                }else{
+                    document.location.reload();
+                }
+
+            }
+        )
+    }
+
+     get_edit_member_msg =function (user_id){
+        document.getElementById('edit_member_form').style.display='block';
+        $.get(
+            '/get_edit_member_msg/'+user_id,
+            {},
+            function (ret){
+
+                document.getElementById('edit_username').value = ret.username;
+                document.getElementById('edit_email').value = ret.email;
+                document.getElementById('edit_id').value = user_id;
+            }
+        )
+    }
+
+    function edit_member(){
+        const username = document.getElementById('edit_username').value;
+        const email = document.getElementById('edit_email').value;
+        const id = document.getElementById('edit_id').value;
+        $.post(
+            '/edit_member/',
+            {'username':username,'email':email,"id":id},
+            function (ret){
+                if(ret !== 'error'){
+                    document.location.reload();
+                }else{
+                    alert('该用户已经存在')
+                }
+
+            }
+        )
+    }
+</script>
+</html>

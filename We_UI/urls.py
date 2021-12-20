@@ -48,5 +48,8 @@ urlpatterns = [
     path('user_list/',user_list),
     path('add_member/',add_user),
     re_path('get_edit_member_msg/(?P<user_id>.+)',get_user_msg),
-    path('edit_member/',edit_user)
+    path('edit_member/',edit_user),
+    re_path('locator_list/(?P<pro_id>.*)',locator_list),
+    re_path('add_locator/(?P<pro_id>.+)', add_locator),
+
 ]

@@ -38,7 +38,6 @@ def login(request):
         next_url = '/home/'
     username = request.POST.get('username')
     password = request.POST.get('password')
-
     # authenticate 有就返回对象 没有就返回none
     username_check = len(User.objects.filter(username=username))
     if username_check == 0:
@@ -248,16 +247,28 @@ def run_script(request, case_id):
     if script_name in ['', ' ', None, 'None']:
         return HttpResponse('Error')
     # 执行py文件
-    if operation == "Windows":
-        subprocess.call(
-            'python my_client/client_%s/case/%s %s %s %s %s' % (
-                pro_id, script_name, host, script_name, case_name, str(retry_count)),
-            shell=True)
-    else:
-        subprocess.call(
-            'python3 my_client/client_%s/case/%s %s %s %s %s' % (
-                pro_id, script_name, host, script_name, case_name, str(retry_count)),
-            shell=True)
+    if '.py' in script_name:
+        if operation == "Windows":
+            subprocess.call(
+                'python my_client/client_%s/case/%s %s %s %s %s' % (
+                    pro_id, script_name, host, script_name, case_name, str(retry_count)),
+                shell=True)
+        else:
+            subprocess.call(
+                'python3 my_client/client_%s/case/%s %s %s %s %s' % (
+                    pro_id, script_name, host, script_name, case_name, str(retry_count)),
+                shell=True)
+    elif '.xls' in script_name:
+        if operation == "Windows":
+            subprocess.call(
+                'python my_client/client_%s/public/xls_to_script.py %s %s %s %s' % (
+                    pro_id, host, script_name, case_name, str(retry_count)),
+                shell=True)
+        else:
+            subprocess.call(
+                'python3 my_client/client_%s/public/xls_to_script.py %s %s %s %s' % (
+                    pro_id, host, script_name, case_name, str(retry_count)),
+                shell=True)
     return HttpResponse('Success')
 
 
@@ -272,12 +283,21 @@ def concurrent_run_script(request, pro_id):
     def concurrent_run(case):
         if case.script not in ['', ' ', None, 'None']:
             # 执行py文件
-            if operation == "Windows":
-                subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
-                    case.pro_id, case.script, host, case.script, case.name), shell=True)
-            else:
-                subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
-                    case.pro_id, case.script, host, case.script, case.name), shell=True)
+            if '.py' in case.script:
+                if operation == "Windows":
+                    subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
+                        case.pro_id, case.script, host, case.script, case.name), shell=True)
+                else:
+                    subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
+                        case.pro_id, case.script, host, case.script, case.name), shell=True)
+            elif '.xls' in case.script:
+                if operation == "Windows":
+                    subprocess.call('python my_client/client_%s/public/xls_to_script.py %s %s %s' % (
+                        case.pro_id, host, case.script, case.name), shell=True)
+                else:
+                    subprocess.call('python3 my_client/client_%s/public/xls_to_script.py %s %s %s' % (
+                        case.pro_id, host, case.script, case.name), shell=True)
+
             print(case, "执行完成")
 
     tf = []
@@ -348,14 +368,13 @@ def look_report(request, case_id):
 
 
 # 查看报告总结
-@login_required
 def look_report_summary(request, pro_id=''):
     # 获取项目对应的全部用例
     pro_name = DB_end.objects.filter(id=pro_id)[0].name
     cases = list(DB_cases.objects.filter(pro_id=pro_id).values())
     # 声明结果变量
     res = '【%s项目用例总结】\n' % pro_name
-    total_case = 0;
+    total_case = 0
     pass_case = 0
     fail_case = 0
     # 存放错误用例名称
@@ -516,3 +535,27 @@ def upload_public_utils(request, pro_id):
         for content in utils_file.chunks():
             f.write(content)
     return HttpResponseRedirect('/testcases/' + pro_id)
+
+
+# 定位器列表
+def locator_list(request, pro_id='', page=''):
+    projects = DB_end.objects.filter()
+    if pro_id == '' or pro_id is None:
+        pro_id = DB_end.objects.filter()[0].id
+
+    pro = DB_end.objects.filter(id=pro_id)[0]
+    if page != '' and page is not None:
+        locators = DB_locator.objects.filter(pro_id=pro_id, page=page)
+    else:
+        locators = DB_locator.objects.filter(pro_id=pro_id)
+    pages = DB_page.objects.filter(pro_id=pro_id)
+    res = {'locators': locators, 'project': pro, 'page': page, 'pages': pages, 'projects': projects}
+    return render(request, 'locator.html', res)
+
+
+# 添加定位器
+def add_locator(request, pro_id):
+    print('++++++++++++++++')
+    DB_locator.objects.create(pro_id=pro_id, name=request.POST.get('loc_name'),
+                              page=str(request.POST.get('loc_page')), tmp_value=request.POST.get('loc_value'))
+    return HttpResponseRedirect('/locator_list/'+pro_id)

@@ -1,3 +1,5 @@
+import time
+
 import xlrd
 import os
 import unittest
@@ -5,6 +7,8 @@ import platform
 import sys
 
 from selenium import webdriver
+from selenium.webdriver.common import by
+from selenium.webdriver.common.by import By
 
 operation = platform.system()
 if operation == 'Windows':
@@ -32,18 +36,39 @@ class Test(unittest.TestCase):
     def setUp(self):
         util_get_index_page(self, host)
 
-    def begin_test(self,case_date):
+    def begin_test(self, case_date):
         '这里是用例描述'
+        # 获取用例步骤 遍历判断
         print(case_date)
+        steps = case_date['case_steps']
+        locator = ()
 
+        for step in steps:
 
-
+            locator_ = step['locator']
+            if 'id' in locator_:
+                locator = (By.ID, str(locator_).split('=')[1])
+            elif 'name' in locator_:
+                locator = (By.NAME, str(locator_).split('=')[1])
+            elif 'css' in locator_:
+                locator = (By.NAME, str(locator_).split('=')[1])
+            elif 'xpath' in locator_:
+                locator = (By.NAME, str(locator_).split('=')[1])
+            action = step['action']
+            content = step['content']
+            if 'send_key' == action or '输入' == action:
+                self.driver.find_element(*locator).send_keys(content)
+            elif 'click' in action or '点击' in action:
+                self.driver.find_element(*locator).click()
+            elif 'sleep' in action or '等待' in action:
+                time.sleep(content)
 
 
 def to_demo(case_date):
     # 调入测试数据 执行用例
     def demo(self):
         Test.begin_test(self, case_date)
+
     setattr(demo, '__doc__', str(case_date['case_name'] + ':' + case_date['case_des']))
     return demo
 
@@ -70,16 +95,17 @@ def read_excel(file_name):
     rows = sheet.nrows
     case_content = {}
     # 遍历表格获取内容
-    for i in range(1, rows):
-        if 'case' in sheet.cell_value(i, 0):
-            case_content = {'case_name': str(sheet.cell_value(i, 0)).split(':')[1], 'case_des': sheet.cell_value(i, 1),
-                            'case-steps': []}
+    for i in range(0, rows):
+        if 'case' == sheet.cell_value(i, 0):
+            case_content = {'case_name': sheet.cell_value(i, 1), 'case_des': sheet.cell_value(i, 1),
+                            'case_steps': []}
             datas.append(case_content)
         else:
             # 具体步骤
             step_tmp = {'step': sheet.cell_value(i, 0), 'locator': sheet.cell_value(i, 1),
                         'action': sheet.cell_value(i, 2), 'content': sheet.cell_value(i, 3)}
-            case_content['case-steps'].append(step_tmp)
+            case_content['case_steps'].append(step_tmp)
+
     return datas
 
 
@@ -101,5 +127,5 @@ if __name__ == '__main__':
 
     param["script_name"] = script_name
     param["case_name"] = case_name
-    util_run_with_report(self=Test,param=param)
-
+    # unittest.main()
+    util_run_with_report(self=Test, param=param)

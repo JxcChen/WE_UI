@@ -64,17 +64,20 @@ def send_report_wechat():
     以企微方式推送报告消息
     """
     # 先获取报告内容
+
     response = look_report_summary({}, pro_id)
     report_content = response.content.decode()
     wechat_url = project.dingtalk
-    header = { 'Content-Type': 'application/json'}
+    header = {'Content-Type': 'application/json'}
     data = {"msgtype": "text",
             "text": {
                 "content": report_content
             }
             }
-    response = requests.post(wechat_url,data=json.dumps(data),headers=header)
-    print(response)
+    response = requests.post(
+        "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6abe65f6-be65-43cd-b252-6ca5948abc47",
+        data=json.dumps(data), headers=header)
+    print("+++++++++++++" + response)
 
 
 def monitor():
@@ -84,12 +87,20 @@ def monitor():
         cases = DB_cases.objects.filter(pro_id=pro_id, is_monitor=True)
         for case in cases:
             if case not in ['', None, ' ', 'None']:
-                if operation == 'Windows':
-                    subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
-                        case.pro_id, case.script, project.monitor_host, case.script, case.name), shell=True)
-                else:
-                    subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
-                        case.pro_id, case.script, project.monitor_host, case.script, case.name), shell=True)
+                if '.py' in case.script:
+                    if operation == 'Windows':
+                        subprocess.call('python my_client/client_%s/case/%s %s %s %s' % (
+                            case.pro_id, case.script, project.monitor_host, case.script, case.name), shell=True)
+                    else:
+                        subprocess.call('python3 my_client/client_%s/case/%s %s %s %s' % (
+                            case.pro_id, case.script, project.monitor_host, case.script, case.name), shell=True)
+                elif '.xls' in case.script:
+                    if operation == "Windows":
+                        subprocess.call('python my_client/client_%s/public/xls_to_script.py %s %s %s' % (
+                            case.pro_id, project.monitor_host, case.script, case.name), shell=True)
+                    else:
+                        subprocess.call('python3 my_client/client_%s/public/xls_to_script.py %s %s %s' % (
+                            case.pro_id, project.monitor_host, case.script, case.name), shell=True)
         print('本轮测试执行完毕')
         send_report_wechat()
         time.sleep(project.check_time)

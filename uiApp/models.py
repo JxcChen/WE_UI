@@ -50,3 +50,24 @@ class DB_users(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class DB_locator(models.Model):
+    pro_id = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    page = models.CharField(max_length=50, null=True, blank=True)
+    tmp_method = models.CharField(max_length=30, null=True, blank=True)
+    tmp_value = models.CharField(max_length=200, null=True, blank=True)
+    tag = models.CharField(max_length=300, null=True, blank=True)
+    index = models.IntegerField(default=0)  # 下标
+
+    def __str__(self):
+        return self.name
+
+
+class DB_page(models.Model):
+    pro_id = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
