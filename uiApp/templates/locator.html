@@ -57,7 +57,7 @@
                                     {{ locator.id }}
                                 </td>
                                 <td>
-                                    {{ locator.page}}
+                                    {{ locator.page_name}}
                                 </td>
                                 <td>
                                     {{ locator.name}}
@@ -67,7 +67,7 @@
                                 </td>
                                 <td>
                                      <input type="button" class="btn btn-default" onclick="get_edit_member_msg({{ user.id }})" value="编辑">
-                                    <button class="btn btn-danger">删除</button>
+                                    <button class="btn btn-danger" onclick="delete_locator({{ locator.id }})">删除</button>
                                 </td>
 
                             </tr>
@@ -79,10 +79,13 @@
                 <form id="add_member_form" class="form-horizontal" role="form"
                       style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
                       margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" method="post">
+                    <div>
+                        <span type="text" id="error_msg" ></span>
+                    </div>
                     <div class="form-group"  style="margin-left: 40px;margin-top: 40px">
                          <label class="col-sm-2 control-label">名称</label>
                         <div class="input-group" style="width: 300px">
-                          <input id="loc_name"  type="sele" class="form-control" placeholder="请输入名称" aria-describedby="sizing-addon2">
+                          <input id="loc_name"  type="text" class="form-control" placeholder="请输入名称" aria-describedby="sizing-addon2">
                         </div>
                     </div>
 
@@ -114,39 +117,44 @@
                     </div>
                 </form>
 
-{#                <form id="edit_member_form" class="form-horizontal" role="form"#}
-{#                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;#}
-{#                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center"#}
-{#                >#}
-{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">#}
-{#                         <label class="col-sm-2 control-label">成员名称</label>#}
-{#                        <div class="input-group" style="width: 300px">#}
-{#                          <input name="edit_username" id="edit_username"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
-{#                        </div>#}
-{#                    </div>#}
-{##}
-{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">#}
-{#                         <label class="col-sm-2 control-label">成员邮箱</label>#}
-{#                        <div class="input-group" style="width: 300px">#}
-{#                          <input name="edit_email" id="edit_email"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px;">#}
-{#                         <label class="col-sm-2 control-label">成员id</label>#}
-{#                        <div class="input-group" style="width: 300px">#}
-{#                          <input name="edit_id" id="edit_id"  type="text" class="form-control" placeholder="成员名称" aria-describedby="sizing-addon2">#}
-{#                        </div>#}
-{#                    </div>#}
-{##}
-{##}
-{##}
-{#                    <div class="form-group" style="margin-left: 40px;">#}
-{#                        <div class="col-sm-offset-2 col-sm-10">#}
-{#                            <button  onclick="edit_member()"  class="btn btn-default">确定</button> <spam id="error_msg"></spam>#}
-{#                            <input type="button" onclick="javascript:document.getElementById('edit_member_form').style.display='none'" class="btn btn-default" value="取消">#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </form>#}
+                <form id="edit_locator_form" class="form-horizontal" role="form"
+                      style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center"
+                >
+                    <div class="form-group"  style="margin-left: 40px;margin-top: 40px">
+                         <label class="col-sm-2 control-label">名称</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_name"  type="text" class="form-control" placeholder="请输入名称" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">值</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_value"  type="text" class="form-control" placeholder="请输入定位器值" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">所属页面</label>
+                        <div class="input-group" style="width: 300px">
+                            <select id="loc_page" id="page_select" >
+                                <option value="">请选择所属页面</option>
+                                {% for p in pages %}
+                                    <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button  onclick="edit_member()"  class="btn btn-default">确定</button> <spam id="error_msg"></spam>
+                            <input type="button" onclick="javascript:document.getElementById('edit_member_form').style.display='none'" class="btn btn-default" value="取消">
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
      </div>
@@ -161,8 +169,10 @@
             '/add_locator/'+pro_id,
             {'loc_name':loc_name,'loc_value':loc_value,'loc_page':loc_page},
             function (ret){
-                if (ret === 'error'){
-                    document.getElementById('error_msg').value='用户名已存在';
+
+                if (ret == 'error'){
+                    alert('定位器已存在')
+                    document.location.reload();
                 }else{
                     document.location.reload();
                 }
@@ -171,8 +181,8 @@
         )
     }
 
-     get_edit_member_msg =function (user_id){
-        document.getElementById('edit_member_form').style.display='block';
+     get_edit_locator_msg =function (user_id){
+        document.getElementById('edit_locator_form').style.display='block';
         $.get(
             '/get_edit_member_msg/'+user_id,
             {},
@@ -201,6 +211,19 @@
 
             }
         )
+    }
+    function delete_locator(loc_id){
+        const res= confirm("是否确定删除该定位器")
+        if(res){
+            $.get(
+                '/delete_locator/'+loc_id,
+                {},
+                function (ret){
+                    document.location.reload();
+                }
+             )
+        }
+
     }
 </script>
 </html>

@@ -555,7 +555,23 @@ def locator_list(request, pro_id='', page=''):
 
 # 添加定位器
 def add_locator(request, pro_id):
-    print('++++++++++++++++')
-    DB_locator.objects.create(pro_id=pro_id, name=request.POST.get('loc_name'),
-                              page=str(request.POST.get('loc_page')), tmp_value=request.POST.get('loc_value'))
-    return HttpResponseRedirect('/locator_list/'+pro_id)
+    loc_name = request.POST.get('loc_name')
+    loc_page = request.POST.get('loc_page')
+
+    page_name = DB_page.objects.filter(id=int(loc_page))[0].name
+    # 重名不能够新增
+    l = len(DB_locator.objects.filter(pro_id=pro_id, name=loc_name, page=loc_page))
+    if l > 0:
+        return HttpResponse('error')
+    # 新增
+    DB_locator.objects.create(pro_id=pro_id, name=loc_name,
+                              page=str(loc_page), tmp_value=request.POST.get('loc_value'), page_name=page_name)
+    return HttpResponseRedirect('/locator_list/' + pro_id)
+
+
+# 删除定位器
+def delete_locator(request, loc_id):
+    loc = DB_locator.objects.filter(id=loc_id)
+    pro_id = loc[0].pro_id
+    loc.delete()
+    return HttpResponseRedirect('/locator_list/' + pro_id)

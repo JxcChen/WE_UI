@@ -22,8 +22,8 @@ urlpatterns = [
     path('user_login/', login),
     path('login_no_user/', login_no_user),
     path('login_pwd_error/', login_pwd_error),
-    path('logout/',logout),
-    path('accounts/login/',to_login),
+    path('logout/', logout),
+    path('accounts/login/', to_login),
     path('admin/', admin.site.urls),
     path('home/', home),
     path('save_end/', save_end),
@@ -45,11 +45,12 @@ urlpatterns = [
     re_path('look_report_summary/(?P<pro_id>.+)', look_report_summary),
     re_path('export_report/(?P<pro_id>.+)', export_report),
     re_path('upload_utils/(?P<pro_id>.+)', upload_public_utils),
-    path('user_list/',user_list),
-    path('add_member/',add_user),
-    re_path('get_edit_member_msg/(?P<user_id>.+)',get_user_msg),
-    path('edit_member/',edit_user),
-    re_path('locator_list/(?P<pro_id>.*)',locator_list),
+    path('user_list/', user_list),
+    path('add_member/', add_user),
+    re_path('get_edit_member_msg/(?P<user_id>.+)', get_user_msg),
+    path('edit_member/', edit_user),
+    re_path('locator_list/(?P<pro_id>.*)', locator_list),
     re_path('add_locator/(?P<pro_id>.+)', add_locator),
+    re_path('delete_locator/(?P<loc_id>.+)', delete_locator)
 
 ]

@@ -56,6 +56,7 @@ class DB_locator(models.Model):
     pro_id = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     page = models.CharField(max_length=50, null=True, blank=True)
+    page_name = models.CharField(max_length=50, null=True, blank=True)
     tmp_method = models.CharField(max_length=30, null=True, blank=True)
     tmp_value = models.CharField(max_length=200, null=True, blank=True)
     tag = models.CharField(max_length=300, null=True, blank=True)
