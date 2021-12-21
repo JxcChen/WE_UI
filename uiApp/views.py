@@ -575,3 +575,21 @@ def delete_locator(request, loc_id):
     pro_id = loc[0].pro_id
     loc.delete()
     return HttpResponseRedirect('/locator_list/' + pro_id)
+
+
+# 获取定位器信息
+def get_locator_msg(request, loc_id):
+    locator = list(DB_locator.objects.filter(id=loc_id).values())[0]
+    return HttpResponse(json.dumps(locator), content_type="application/json")
+
+
+# 修改定位器
+def edit_locator(request,loc_id):
+    loc_name = request.POST.get('loc_name')
+    loc_page = request.POST.get('loc_page')
+    loc_value = request.POST.get('loc_value')
+    page = DB_page.objects.filter(id=int(loc_page))[0]
+    page_name = page.name
+    pro_id = page.pro_id
+    DB_locator.objects.filter(id=loc_id).update(name=loc_name,tmp_value=loc_value,page=str(loc_page),page_name=page_name)
+    return HttpResponseRedirect('/locator_list/' + pro_id)
