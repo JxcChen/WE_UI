@@ -557,7 +557,7 @@ def locator_list(request, pro_id='', page=''):
 def add_locator(request, pro_id):
     loc_name = request.POST.get('loc_name')
     loc_page = request.POST.get('loc_page')
-
+    loc_method = request.POST.get('loc_method')
     page_name = DB_page.objects.filter(id=int(loc_page))[0].name
     # 重名不能够新增
     l = len(DB_locator.objects.filter(pro_id=pro_id, name=loc_name, page=loc_page))
@@ -565,7 +565,8 @@ def add_locator(request, pro_id):
         return HttpResponse('error')
     # 新增
     DB_locator.objects.create(pro_id=pro_id, name=loc_name,
-                              page=str(loc_page), tmp_value=request.POST.get('loc_value'), page_name=page_name)
+                              page=str(loc_page), tmp_value=request.POST.get('loc_value'), page_name=page_name,
+                              tmp_method=loc_method)
     return HttpResponseRedirect('/locator_list/' + pro_id)
 
 
@@ -584,12 +585,20 @@ def get_locator_msg(request, loc_id):
 
 
 # 修改定位器
-def edit_locator(request,loc_id):
+def edit_locator(request, loc_id):
     loc_name = request.POST.get('loc_name')
     loc_page = request.POST.get('loc_page')
     loc_value = request.POST.get('loc_value')
+    loc_method = request.POST.get('loc_method')
     page = DB_page.objects.filter(id=int(loc_page))[0]
     page_name = page.name
     pro_id = page.pro_id
-    DB_locator.objects.filter(id=loc_id).update(name=loc_name,tmp_value=loc_value,page=str(loc_page),page_name=page_name)
+    DB_locator.objects.filter(id=loc_id).update(name=loc_name, tmp_value=loc_value, page=str(loc_page),
+                                                page_name=page_name,tmp_method=loc_method)
     return HttpResponseRedirect('/locator_list/' + pro_id)
+
+
+# 外部获取定位器
+def open_get_locator(request,loc_id):
+    locator = list(DB_locator.objects.filter(id=loc_id).values())[0]
+    return HttpResponse(json.dumps(locator),content_type="application/json")

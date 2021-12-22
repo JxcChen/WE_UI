@@ -1,7 +1,9 @@
 import os
 import platform
 import unittest
+import requests
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 operation = platform.system()
 
@@ -33,3 +35,23 @@ def util_run_with_report(self, param: dict):
         runner = HTMLTestRunner(f, title=case_name + "测试报告",
                                 description="用例名称：" + case_name + " 脚本名称：" + param['script_name'])
         runner.run(unittest.makeSuite(self))
+
+
+# 通过获取定位器接口获取定位器  并进行定位返回元素
+def util_get_element(self, loc_id):
+    if loc_id == '' or loc_id == ' ' or loc_id is None:
+        return None
+    res = requests.get("http://127.0.0.1:8000/open_get_locator/%s" % int(loc_id)).json()
+    loc = res['tmp_value']
+    method = res['tmp_method']
+    locator = ()
+    if 'id' == method:
+        locator = (By.ID, loc)
+    elif 'name' == method:
+        locator = (By.NAME, loc)
+    elif 'css' == method:
+        locator = (By.CSS_SELECTOR, loc)
+    elif 'xpath' == method:
+        locator = (By.XPATH, loc)
+
+    return locator

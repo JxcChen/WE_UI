@@ -189,9 +189,9 @@ function showOutput(id, name) {
 
 <div class='heading'>
 <h1>浏览商品测试报告</h1>
-<p class='attribute'><strong>Start Time:</strong> 2021-12-20 14:28:25</p>
-<p class='attribute'><strong>Duration:</strong> 0:00:09.677056</p>
-<p class='attribute'><strong>Status:</strong> Pass 2</p>
+<p class='attribute'><strong>Start Time:</strong> 2021-12-22 19:53:04</p>
+<p class='attribute'><strong>Duration:</strong> 0:00:04.535076</p>
+<p class='attribute'><strong>Status:</strong> Error 2</p>
 
 <p class='description'>用例名称：浏览商品 脚本名称：关键字驱动.xls</p>
 </div>
@@ -221,31 +221,47 @@ function showOutput(id, name) {
     <td>View</td>
 </tr>
 
-<tr class='passClass'>
+<tr class='errorClass'>
     <td>Test</td>
     <td>2</td>
+    <td>0</td>
+    <td>0</td>
     <td>2</td>
-    <td>0</td>
-    <td>0</td>
     <td><a href="javascript:showClassDetail('c1',2)">Detail</a></td>
 </tr>
 
-<tr id='pt1.1' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_1: 测试百度搜索:测试百度搜索</div></td>
+<tr id='ft1.1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_1: 测试百度搜索:点击搜索验证</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
-        pass</a>
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
+        error</a>
 
-    <div id='div_pt1.1' class="popup_window">
+    <div id='div_ft1.1' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-pt1.1: 
+ft1.1: Traceback (most recent call last):
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 71, in demo
+    Test.begin_test(self, case_date)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 49, in begin_test
+    util_get_element(Test, locator_)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\utils.py", line 44, in util_get_element
+    print("++++++++++++++++"+res.json())
+TypeError: can only concatenate str (not "dict") to str
+Traceback (most recent call last):
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 71, in demo
+    Test.begin_test(self, case_date)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 49, in begin_test
+    util_get_element(Test, locator_)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\utils.py", line 44, in util_get_element
+    print("++++++++++++++++"+res.json())
+TypeError: can only concatenate str (not "dict") to str
+
 
         </pre>
     </div>
@@ -254,22 +270,38 @@ pt1.1:
     </td>
 </tr>
 
-<tr id='pt1.2' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_2: 测试百度搜索2:测试百度搜索2</div></td>
+<tr id='ft1.2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_2: 测试百度搜索2:点击搜索验证2</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.2')" >
-        pass</a>
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.2')" >
+        error</a>
 
-    <div id='div_pt1.2' class="popup_window">
+    <div id='div_ft1.2' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.2').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-pt1.2: 
+ft1.2: Traceback (most recent call last):
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 71, in demo
+    Test.begin_test(self, case_date)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 49, in begin_test
+    util_get_element(Test, locator_)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\utils.py", line 44, in util_get_element
+    print("++++++++++++++++"+res.json())
+TypeError: can only concatenate str (not "dict") to str
+Traceback (most recent call last):
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 71, in demo
+    Test.begin_test(self, case_date)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 49, in begin_test
+    util_get_element(Test, locator_)
+  File "G:\pythonProject\We_UI\my_client\client_10\public\utils.py", line 44, in util_get_element
+    print("++++++++++++++++"+res.json())
+TypeError: can only concatenate str (not "dict") to str
+
 
         </pre>
     </div>
@@ -281,9 +313,9 @@ pt1.2:
 <tr id='total_row'>
     <td>Total</td>
     <td name='sum'>2</td>
+    <td name='sum'>0</td>
+    <td name='sum'>0</td>
     <td name='sum'>2</td>
-    <td name='sum'>0</td>
-    <td name='sum'>0</td>
     <td>&nbsp;</td>
 </tr>
 </table>

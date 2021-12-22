@@ -45,22 +45,14 @@ class Test(unittest.TestCase):
 
         for step in steps:
 
-            locator_ = step['locator']
-            if 'id' in locator_:
-                locator = (By.ID, str(locator_).split('=')[1])
-            elif 'name' in locator_:
-                locator = (By.NAME, str(locator_).split('=')[1])
-            elif 'css' in locator_:
-                locator = (By.NAME, str(locator_).split('=')[1])
-            elif 'xpath' in locator_:
-                locator = (By.NAME, str(locator_).split('=')[1])
+            locator = util_get_element(self, step['locator'])
             action = step['action']
             content = step['content']
             if 'send_key' == action or '输入' == action:
                 self.driver.find_element(*locator).send_keys(content)
             elif 'click' in action or '点击' in action:
                 self.driver.find_element(*locator).click()
-            elif 'sleep' in action or '等待' in action:
+            elif 'sleep' == action or '等待' == action:
                 time.sleep(content)
 
 
@@ -97,13 +89,13 @@ def read_excel(file_name):
     # 遍历表格获取内容
     for i in range(0, rows):
         if 'case' == sheet.cell_value(i, 0):
-            case_content = {'case_name': sheet.cell_value(i, 1), 'case_des': sheet.cell_value(i, 1),
+            case_content = {'case_name': sheet.cell_value(i, 1), 'case_des': sheet.cell_value(i, 2),
                             'case_steps': []}
             datas.append(case_content)
         else:
             # 具体步骤
-            step_tmp = {'step': sheet.cell_value(i, 0), 'locator': sheet.cell_value(i, 1),
-                        'action': sheet.cell_value(i, 2), 'content': sheet.cell_value(i, 3)}
+            step_tmp = {'step': sheet.cell_value(i, 0), 'locator': sheet.cell_value(i, 3),
+                        'action': sheet.cell_value(i, 1), 'content': sheet.cell_value(i, 2)}
             case_content['case_steps'].append(step_tmp)
 
     return datas
