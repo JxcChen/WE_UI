@@ -53,5 +53,4 @@ def util_get_element(self, loc_id):
         locator = (By.CSS_SELECTOR, loc)
     elif 'xpath' == method:
         locator = (By.XPATH, loc)
-
     return locator

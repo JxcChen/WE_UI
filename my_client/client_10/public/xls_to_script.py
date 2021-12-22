@@ -41,10 +41,8 @@ class Test(unittest.TestCase):
         # 获取用例步骤 遍历判断
         print(case_date)
         steps = case_date['case_steps']
-        locator = ()
 
         for step in steps:
-
             locator = util_get_element(self, step['locator'])
             action = step['action']
             content = step['content']
