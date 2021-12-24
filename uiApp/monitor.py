@@ -77,7 +77,7 @@ def send_report_wechat():
     response = requests.post(
         "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6abe65f6-be65-43cd-b252-6ca5948abc47",
         data=json.dumps(data), headers=header)
-    print("+++++++++++++" + response)
+
 
 
 def monitor():

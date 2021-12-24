@@ -558,6 +558,8 @@ def add_locator(request, pro_id):
     loc_name = request.POST.get('loc_name')
     loc_page = request.POST.get('loc_page')
     loc_method = request.POST.get('loc_method')
+    loc_index = request.POST.get('loc_index')
+    loc_tag = request.POST.get('loc_tag')
     page_name = DB_page.objects.filter(id=int(loc_page))[0].name
     # 重名不能够新增
     l = len(DB_locator.objects.filter(pro_id=pro_id, name=loc_name, page=loc_page))
@@ -566,7 +568,7 @@ def add_locator(request, pro_id):
     # 新增
     DB_locator.objects.create(pro_id=pro_id, name=loc_name,
                               page=str(loc_page), tmp_value=request.POST.get('loc_value'), page_name=page_name,
-                              tmp_method=loc_method)
+                              tmp_method=loc_method, index=loc_index, tag=loc_tag)
     return HttpResponseRedirect('/locator_list/' + pro_id)
 
 
@@ -590,15 +592,31 @@ def edit_locator(request, loc_id):
     loc_page = request.POST.get('loc_page')
     loc_value = request.POST.get('loc_value')
     loc_method = request.POST.get('loc_method')
+    loc_index = request.POST.get('loc_index')
+    loc_tag = request.POST.get('loc_tag')
     page = DB_page.objects.filter(id=int(loc_page))[0]
     page_name = page.name
     pro_id = page.pro_id
     DB_locator.objects.filter(id=loc_id).update(name=loc_name, tmp_value=loc_value, page=str(loc_page),
-                                                page_name=page_name,tmp_method=loc_method)
+                                                page_name=page_name, tmp_method=loc_method, index=loc_index,
+                                                tag=loc_tag)
     return HttpResponseRedirect('/locator_list/' + pro_id)
 
 
 # 外部获取定位器
-def open_get_locator(request,loc_id):
+def open_get_locator(request, loc_id):
     locator = list(DB_locator.objects.filter(id=loc_id).values())[0]
-    return HttpResponse(json.dumps(locator),content_type="application/json")
+    return HttpResponse(json.dumps(locator), content_type="application/json")
+
+
+# 外部修改定位器
+def open_edit_locator(request, loc_id):
+
+    tmp_method = request.POST.get('tmp_method')
+    tmp_value = request.POST.get('tmp_value')
+    tag = request.POST.get('tag')
+    index = request.POST.get('index')
+
+    DB_locator.objects.filter(id=loc_id).update(tmp_value=tmp_value, tmp_method=tmp_method, index=index,
+                                                tag=tag)
+    return HttpResponse(json.dumps({'code': 200, 'message': "成功"}), content_type="application/json")

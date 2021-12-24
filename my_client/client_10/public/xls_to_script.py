@@ -18,8 +18,10 @@ else:
 
 try:
     from public.utils import *
+    from public.auto_get_element import auto_get_element
 except Exception as e:
     exec("from my_client.%s.public.utils import *" % file_path)
+    exec("from my_client.%s.public.auto_get_element import *" % file_path)
 
 
 class Test(unittest.TestCase):
@@ -36,20 +38,27 @@ class Test(unittest.TestCase):
     def setUp(self):
         util_get_index_page(self, host)
 
+    def tearDown(self, method_name):
+        if env == 'local':
+            picture_name = "../report/picture/%s-%s.png" % (case_name, method_name)
+        else:
+            picture_name = "uiApp/static/res_picture/%s-%s.png" % (case_name, method_name)
+        self.driver.get_screenshot_as_file(picture_name)
+
     def begin_test(self, case_date):
         '这里是用例描述'
         # 获取用例步骤 遍历判断
-        print(case_date)
         steps = case_date['case_steps']
 
         for step in steps:
-            locator = util_get_element(self, step['locator'])
+            element = util_get_element(self, step['locator'])
             action = step['action']
             content = step['content']
+
             if 'send_key' == action or '输入' == action:
-                self.driver.find_element(*locator).send_keys(content)
+                element.send_keys(content)
             elif 'click' in action or '点击' in action:
-                self.driver.find_element(*locator).click()
+                element.click()
             elif 'sleep' == action or '等待' == action:
                 time.sleep(content)
 
@@ -109,13 +118,18 @@ if __name__ == '__main__':
         host = sys.argv[1]
         script_name = sys.argv[2]
         case_name = sys.argv[3]
-
-    except Exception as e:
-        host = "http://www.baidu.com"  # 手动调试时输入host
-        script_name = "测试关键字驱动"  # 输入当前脚本名称
-        case_name = "测试关键字驱动"  # 输入用例名称
-
+        env = "online"
+    except:
+        # ====================== 本地调试需要手动输入以下内容 ======================
+        # ======================       host:调试地址      ======================
+        # ====================== script_name:当前脚本文件名称 ====================
+        # ======================    case_name:用例名称  =========================
+        host = "https://www.baidu.com"
+        script_name = "test_py.py"
+        case_name = "本地调试"
+        env = "local"
     param["script_name"] = script_name
     param["case_name"] = case_name
+    param["env"] = env
     # unittest.main()
     util_run_with_report(self=Test, param=param)

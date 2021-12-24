@@ -54,6 +54,7 @@ urlpatterns = [
     re_path('delete_locator/(?P<loc_id>.+)', delete_locator),
     re_path('get_edit_locator_msg/(?P<loc_id>.+)',get_locator_msg),
     re_path('edit_locator/(?P<loc_id>.+)',edit_locator),
-    re_path('open_get_locator/(?P<loc_id>.+)',open_get_locator)
+    re_path('open_get_locator/(?P<loc_id>.+)',open_get_locator),
+    re_path('open_edits_locator/(?P<loc_id>.+)/',open_edit_locator),
 
 ]

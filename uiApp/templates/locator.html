@@ -12,7 +12,7 @@
 
     {% include 'new_menu.html' %}
 
-     <div class="container">
+     <div class="container" >
         <div class="row clearfix">
             <div class="col-md-12 column" style="position: relative">
                 <div class="dropdown">
@@ -30,7 +30,7 @@
 
                     <button class="btn btn-primary btn-sm" onclick='javascript:document.getElementById("add_member_form").style.display="block"'>添加定位器</button>
                 </div>
-                <table class="table" style="width: 1200px;" align="center">
+                <table class="table" style="width: 1200px;" align="center" >
                     <thead>
                         <tr>
                             <th>
@@ -46,7 +46,13 @@
                                 定位方式
                             </th>
                             <th>
-                                元素详情
+                                定位值
+                            </th>
+                            <th>
+                                标签元素值
+                            </th>
+                            <th>
+                                索引
                             </th>
                             <th>
                                 操作
@@ -69,7 +75,13 @@
                                     {{ locator.tmp_method}}
                                 </td>
                                 <td>
-                                    {{ locator.tmp_value}}
+                                    <input type="text" disabled="true" value="{{ locator.tmp_value}}">
+                                </td>
+                                <td>
+                                    <input type="text" disabled="true" value="{{ locator.tag}}">
+                                </td>
+                                <td>
+                                    {{ locator.index }}
                                 </td>
                                 <td>
                                      <input type="button" class="btn btn-default" onclick="get_edit_locator_msg({{ locator.id }})" value="编辑">
@@ -99,7 +111,21 @@
                     <div class="form-group" style="margin-left: 40px;">
                         <label class="col-sm-2 control-label">值</label>
                         <div class="input-group" style="width: 300px">
-                          <input id="loc_value"  type="text" class="form-control" placeholder="请输入定位器值" aria-describedby="sizing-addon2">
+                          <input id="loc_value"  type="text" class="form-control" placeholder="请输入定位值" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">索引</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_index"  type="text" class="form-control" placeholder="请输入定位索引" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">标签元素值</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="loc_tag"  type="text" class="form-control" placeholder="请输入标签元素值" aria-describedby="sizing-addon2">
                         </div>
                     </div>
 
@@ -153,9 +179,24 @@
                     <div class="form-group" style="margin-left: 40px;">
                         <label class="col-sm-2 control-label">值</label>
                         <div class="input-group" style="width: 300px">
-                          <input id="edit_value"  type="text" class="form-control" placeholder="请输入定位器值" aria-describedby="sizing-addon2">
+                          <input id="edit_value"  type="text" class="form-control" placeholder="请输入定位值" aria-describedby="sizing-addon2">
                         </div>
                     </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">索引</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="edit_index"  type="text" class="form-control" placeholder="请输入定位索引" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-left: 40px;">
+                        <label class="col-sm-2 control-label">标签元素值</label>
+                        <div class="input-group" style="width: 300px">
+                          <input id="edit_tag"  type="text" class="form-control" placeholder="请输入标签元素值" aria-describedby="sizing-addon2">
+                        </div>
+                    </div>
+
                     <div class="form-group" style="margin-left: 40px;display: none">
                         <label class="col-sm-2 control-label">id</label>
                         <div class="input-group" style="width: 300px">
@@ -205,11 +246,19 @@
     function add_locator(pro_id){
         const loc_name = document.getElementById('loc_name').value;
         const loc_value = document.getElementById('loc_value').value;
+        const loc_index = document.getElementById('loc_index').value;
+        const loc_tag = document.getElementById('loc_tag').value;
         const loc_page = $("#loc_page option:selected").val()
         const loc_method = $("#method_select option:selected").val()
         $.post(
             '/add_locator/'+pro_id,
-            {'loc_name':loc_name,'loc_value':loc_value,'loc_page':loc_page,'loc_method':loc_method},
+            {'loc_name':loc_name,
+                'loc_value':loc_value,
+                "loc_page":loc_page,
+                "loc_method":loc_method,
+                "loc_tag":loc_tag,
+                "loc_index":loc_index
+            },
             function (ret){
 
                 if (ret == 'error'){
@@ -233,6 +282,8 @@
                 document.getElementById('edit_value').value = ret.tmp_value;
                 $("#edit_page_select").val(ret.page)
                 $("#edit_method_select").val(ret.tmp_method)
+                document.getElementById('edit_index').value = ret.index;
+                document.getElementById('edit_tag').value = ret.tag;
                 document.getElementById('edit_id').value = ret.id
             }
         )
@@ -244,9 +295,17 @@
         const page = $("#edit_page_select option:selected").val()
         const loc_id = document.getElementById('edit_id').value;
         const method = $("#edit_method_select option:selected").val()
+        const loc_index = document.getElementById('edit_index').value;
+        const loc_tag = document.getElementById('edit_tag').value;
         $.post(
             '/edit_locator/'+loc_id,
-            {'loc_name':name,'loc_value':value,"loc_page":page,"loc_method":method},
+            {'loc_name':name,
+                'loc_value':value,
+                "loc_page":page,
+                "loc_method":method,
+                "loc_tag":loc_tag,
+                "loc_index":loc_index
+            },
             function (ret){
                 if(ret !== 'error'){
                     document.location.reload();
