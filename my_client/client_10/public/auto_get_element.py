@@ -75,6 +75,7 @@ def auto_get_element(driver: Chrome, loc_dict):
     highest_score = 0
     # 2.1 遍历获取到的元素集
     for i in range(len(tag_elements)):
+        now_score = 0
         new_id = tag_elements[i].get_attribute('id')
         new_name = tag_elements[i].get_attribute('name')
         new_class = tag_elements[i].get_attribute('class')
@@ -103,8 +104,8 @@ def auto_get_element(driver: Chrome, loc_dict):
             highest_score = now_score
 
     # 3 将最新的tag数据进行返回 (进行调用接口进行更新)
-    print(loc_dict['id'])
-    loc_dict = {'tmp_method': 'tag name', 'tmp_value': old_tag_name, 'tag': target_tag, 'index': target_index}
-    res = requests.post(url='http://127.0.0.1:8000/open_edits_locator/4/',data=loc_dict)
-    print(res.content.decode()+"++++++++++")
+    loc_id = str(loc_dict['id'])
+    loc_dict = {'tmp_method': 'tag name', 'tmp_value': old_tag_name, 'tag': target_tag.get_attribute('outerHTML'),
+                'index': target_index}
+    res = requests.post(url='http://127.0.0.1:8000/open_edits_locator/%s/' % loc_id, data=loc_dict)
     return target_tag

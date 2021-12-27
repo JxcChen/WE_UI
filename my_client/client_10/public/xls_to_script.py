@@ -6,9 +6,6 @@ import unittest
 import platform
 import sys
 
-from selenium import webdriver
-from selenium.webdriver.common import by
-from selenium.webdriver.common.by import By
 
 operation = platform.system()
 if operation == 'Windows':
@@ -124,7 +121,7 @@ if __name__ == '__main__':
         # ======================       host:调试地址      ======================
         # ====================== script_name:当前脚本文件名称 ====================
         # ======================    case_name:用例名称  =========================
-        host = "https://www.baidu.com"
+        host = "https://portal-test.ienjoys.com/login"
         script_name = "test_py.py"
         case_name = "本地调试"
         env = "local"
