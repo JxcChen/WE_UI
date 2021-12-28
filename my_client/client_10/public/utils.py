@@ -1,11 +1,10 @@
 import os
 import platform
+import time
 import unittest
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
-from public.auto_get_element import auto_get_element
 
 operation = platform.system()
 if operation == 'Windows':
@@ -15,12 +14,11 @@ else:
 
 try:
     from public.HTMLTestRunner import HTMLTestRunner
+    from public.auto_get_element import auto_get_element
+    from public.auto_get_element import auto_get_element
 except:
     exec('from my_client.%s.public.HTMLTestRunner import HTMLTestRunner' % file_path)
-
-try:
-    from public.auto_get_element import auto_get_element
-except Exception as e:
+    exec('from my_client.%s.public.auto_get_element import auto_get_element' % file_path)
     exec("from my_client.%s.public.auto_get_element import *" % file_path)
 
 
@@ -68,3 +66,30 @@ def util_get_element(self, loc_id):
     except Exception as e:
         ele = auto_get_element(self.driver, res)
     return ele
+
+
+def util_retry_case(set_up, teardown, retry_num):
+    """
+    重试方法:
+    set_up: 前置方法
+    teardown: 后置方法
+    retry_num: 重试次数
+    """
+
+    def retry_method(case_method):
+        def wrapper(*arg, **args):
+            for i in range(retry_num):
+                print('执行第'+str(i+1)+'次')
+                try:
+                    res = case_method(**args)
+                    return res
+                except Exception:
+                    # 执行后置前置
+                    teardown(*arg)
+                    set_up(*arg)
+                    time.sleep(1)
+            raise Exception
+
+        return wrapper
+
+    return retry_method

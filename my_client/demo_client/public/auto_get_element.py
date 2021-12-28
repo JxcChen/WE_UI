@@ -74,9 +74,9 @@ def auto_get_element(driver: Chrome, loc_dict):
     now_score = 0
     highest_score = 0
     # 2.1 遍历获取到的元素集
-    print(str(get_similarity_score('name', 'name'))+"===============")
+    print(get_similarity_score('name', 'name'))
     for i in range(len(tag_elements)):
-        now_score = 0
+        now_score: float = 0.0
         new_id = tag_elements[i].get_attribute('id')
         new_name = tag_elements[i].get_attribute('name')
         new_class = tag_elements[i].get_attribute('class')
@@ -88,16 +88,18 @@ def auto_get_element(driver: Chrome, loc_dict):
         new_type = tag_elements[i].get_attribute('type')
         new_placeholder = tag_elements[i].get_attribute('placeholder')
         # 2.2 对元素集的元素属性与之前获取到的数据进行对比打分
-        now_score += get_similarity_score(old_id, new_id)
-        now_score += get_similarity_score(old_name, new_name)
+        # name相似度占比重最高 一般name一样就通过元素  id可能为动态id
+        now_score += get_similarity_score(old_name, new_name) * 6.0
+        now_score += get_similarity_score(old_id, new_id) * 5.0
+        now_score += get_similarity_score(old_placeholder, new_placeholder) * 3.0
+        now_score += get_similarity_score(old_text, new_text) * 2.0
         now_score += get_similarity_score(old_class, new_class)
-        now_score += get_similarity_score(old_text, new_text)
         now_score += get_similarity_score(old_value, new_value)
         now_score += get_similarity_score(old_onclick, new_onclick)
         now_score += get_similarity_score(old_style, new_style)
         now_score += get_similarity_score(old_href, new_href)
         now_score += get_similarity_score(old_type, new_type)
-        now_score += get_similarity_score(old_placeholder, new_placeholder)
+
         # 2.3 获取到评分最高的tag
         if highest_score < now_score:
             target_tag = tag_elements[i]

@@ -236,9 +236,9 @@ function showOutput(id, name) {
     <div style="border: 1px solid #ffffff;border-radius: 10px;box-shadow: 2px 2px 12px #aeaeae;padding-left: 30px;width: 500px">
 <p class='attribute'>小程序自动化测试平台提供</p>
 <p class='attribute'><strong>注意:</strong> 出现问题请联系管理员！</p>
-<p class='attribute'><strong>报告生成日期:</strong> 2021-12-27 11:06:10</p>
-<p class='attribute'><strong>用例执行时间:</strong> 0:00:35.710767秒</p>
-<p class='attribute'><strong>用例执行结果:</strong> 报错 3</p>
+<p class='attribute'><strong>报告生成日期:</strong> 2021-12-28 09:05:17</p>
+<p class='attribute'><strong>用例执行时间:</strong> 0:00:16.642686秒</p>
+<p class='attribute'><strong>用例执行结果:</strong> 通过 2,</p>
 <p class='attribute'><strong>执行系统:</strong> win32</p>
 
 <br>
@@ -277,37 +277,31 @@ function showOutput(id, name) {
 
 </tr>
 
-<tr class='errorClass'>
+<tr class='passClass'>
     <td>Test</td>
-    <td>3</td>
+    <td>2</td>
+    <td>2</td>
     <td>0</td>
     <td>0</td>
-    <td>3</td>
-    <td><button class="wqrf_button" style="background-color: #ffd1e7"  onclick="javascript:showClassDetail('c1',3)">详细</button></td>
+    <td><button class="wqrf_button" style="background-color: #ffd1e7"  onclick="javascript:showClassDetail('c1',2)">详细</button></td>
 
 </tr>
 
-<tr id='ft1.1' class='none'>
-    <td class='errorCase'><div class='testcase'>test_1: 测试百度搜索:点击搜索验证</div></td>
+<tr id='pt1.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_1: 测试百度搜索:点击搜索验证</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
-        <button class="wqrf_button" style="width: auto">错误详情</button></a>
-    <div id='div_ft1.1' class="popup_window">
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.1' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-ft1.1: {'case_name': '测试百度搜索', 'case_des': '点击搜索验证', 'case_steps': [{'step': 'step1', 'locator': 1.0, 'action': 'send_key', 'content': '关键字驱动'}, {'step': 'step2', 'locator': 2.0, 'action': 'click', 'content': ''}, {'step': 'step3', 'locator': '', 'action': 'sleep', 'content': 2.0}]}
-Traceback (most recent call last):
-  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 67, in demo
-    Test.begin_test(self, case_date)
-  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 57, in begin_test
-    self.driver.find_element(*locator).send_keys(content)
-AttributeError: 'NoneType' object has no attribute 'send_keys'
+pt1.1: 开始执行用例
 
 
          <div id="div100">
@@ -320,127 +314,23 @@ AttributeError: 'NoneType' object has no attribute 'send_keys'
     </td>
 </tr>
 
-<tr id='ft1.2' class='none'>
-    <td class='errorCase'><div class='testcase'>test_1: 测试百度搜索:点击搜索验证</div></td>
+<tr id='pt1.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_2: 测试百度搜索2:点击搜索验证2</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.2')" >
-        <button class="wqrf_button" style="width: auto">错误详情</button></a>
-    <div id='div_ft1.2' class="popup_window">
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.2')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.2' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.2').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-ft1.2: {'case_name': '测试百度搜索', 'case_des': '点击搜索验证', 'case_steps': [{'step': 'step1', 'locator': 1.0, 'action': 'send_key', 'content': '关键字驱动'}, {'step': 'step2', 'locator': 2.0, 'action': 'click', 'content': ''}, {'step': 'step3', 'locator': '', 'action': 'sleep', 'content': 2.0}]}
-Traceback (most recent call last):
-  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 44, in tearDown
-    self.driver.get_screenshot_as_file(picture_name)
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 1311, in get_screenshot_as_file
-    png = self.get_screenshot_as_png()
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 1347, in get_screenshot_as_png
-    return b64decode(self.get_screenshot_as_base64().encode('ascii'))
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 1359, in get_screenshot_as_base64
-    return self.execute(Command.SCREENSHOT)['value']
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 418, in execute
-    self.error_handler.check_response(response)
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 243, in check_response
-    raise exception_class(message, screen, stacktrace)
-selenium.common.exceptions.WebDriverException: Message: chrome not reachable
-  (Session info: chrome=96.0.4664.110)
-Stacktrace:
-Backtrace:
-	Ordinal0 [0x00946903+2517251]
-	Ordinal0 [0x008DF8E1+2095329]
-	Ordinal0 [0x007E2710+1058576]
-	Ordinal0 [0x007D76A4+1013412]
-	Ordinal0 [0x007D7EA8+1015464]
-	Ordinal0 [0x007D9695+1021589]
-	Ordinal0 [0x007D3686+996998]
-	Ordinal0 [0x007E3A60+1063520]
-	Ordinal0 [0x00835382+1397634]
-	Ordinal0 [0x0082639B+1336219]
-	Ordinal0 [0x008027A7+1189799]
-	Ordinal0 [0x00803609+1193481]
-	GetHandleVerifier [0x00AD5904+1577972]
-	GetHandleVerifier [0x00B80B97+2279047]
-	GetHandleVerifier [0x009D6D09+534521]
-	GetHandleVerifier [0x009D5DB9+530601]
-	Ordinal0 [0x008E4FF9+2117625]
-	Ordinal0 [0x008E98A8+2136232]
-	Ordinal0 [0x008E99E2+2136546]
-	Ordinal0 [0x008F3541+2176321]
-	BaseThreadInitThunk [0x751FFA29+25]
-	RtlGetAppContainerNamedObjectPath [0x773875F4+228]
-	RtlGetAppContainerNamedObjectPath [0x773875C4+180]
-
-
-
-         <div id="div100">
-            <img src="/static/res_picture/test.png" alt="" style="height: 80px">
-        </div>
-        </pre>
-    </div> <br>
-    <!--css div popup end-->
-
-    </td>
-</tr>
-
-<tr id='ft1.3' class='none'>
-    <td class='errorCase'><div class='testcase'>test_2: 测试百度搜索2:点击搜索验证2</div></td>
-    <td colspan='5' align='center'>
-
-    <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.3')" >
-        <button class="wqrf_button" style="width: auto">错误详情</button></a>
-    <div id='div_ft1.3' class="popup_window">
-        <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.3').style.display = 'none' " >
-           [x]</a>
-        </div>
-        <pre>
-        
-ft1.3: Traceback (most recent call last):
-  File "G:\pythonProject\We_UI\my_client\client_10\public\xls_to_script.py", line 37, in setUp
-    util_get_index_page(self, host)
-  File "G:\pythonProject\We_UI\my_client\client_10\public\utils.py", line 22, in util_get_index_page
-    self.driver.get(host)
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 430, in get
-    self.execute(Command.GET, {'url': url})
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\webdriver.py", line 418, in execute
-    self.error_handler.check_response(response)
-  File "C:\Users\chenjinxuan1\AppData\Local\Programs\Python\Python39\lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 243, in check_response
-    raise exception_class(message, screen, stacktrace)
-selenium.common.exceptions.WebDriverException: Message: chrome not reachable
-  (Session info: chrome=96.0.4664.110)
-Stacktrace:
-Backtrace:
-	Ordinal0 [0x00946903+2517251]
-	Ordinal0 [0x008DF8E1+2095329]
-	Ordinal0 [0x007E2710+1058576]
-	Ordinal0 [0x007D76A4+1013412]
-	Ordinal0 [0x007D7EA8+1015464]
-	Ordinal0 [0x007D9695+1021589]
-	Ordinal0 [0x007D3686+996998]
-	Ordinal0 [0x007E3A60+1063520]
-	Ordinal0 [0x00835382+1397634]
-	Ordinal0 [0x0082639B+1336219]
-	Ordinal0 [0x008027A7+1189799]
-	Ordinal0 [0x00803609+1193481]
-	GetHandleVerifier [0x00AD5904+1577972]
-	GetHandleVerifier [0x00B80B97+2279047]
-	GetHandleVerifier [0x009D6D09+534521]
-	GetHandleVerifier [0x009D5DB9+530601]
-	Ordinal0 [0x008E4FF9+2117625]
-	Ordinal0 [0x008E98A8+2136232]
-	Ordinal0 [0x008E99E2+2136546]
-	Ordinal0 [0x008F3541+2176321]
-	BaseThreadInitThunk [0x751FFA29+25]
-	RtlGetAppContainerNamedObjectPath [0x773875F4+228]
-	RtlGetAppContainerNamedObjectPath [0x773875C4+180]
-
+pt1.2: 开始执行用例
+常规定位失败,开始执行自动维护
+1.0===============
 
 
          <div id="div100">
@@ -455,10 +345,10 @@ Backtrace:
 
 <tr id='total_row'>
     <td>总计</td>
-    <td name='sum'>3</td>
+    <td name='sum'>2</td>
+    <td name='sum'>2</td>
     <td name='sum'>0</td>
     <td name='sum'>0</td>
-    <td name='sum'>3</td>
     <td><button class="wqrf_button" style="background-color: #ffc2e6" onclick='javascript:location.reload()'>刷新</button></td>
 
 </tr>

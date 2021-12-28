@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
         '这里是用例描述'
         # 获取用例步骤 遍历判断
         steps = case_date['case_steps']
-
+        print('开始执行用例')
         for step in steps:
             element = util_get_element(self, step['locator'])
             action = step['action']
@@ -122,7 +122,7 @@ if __name__ == '__main__':
         # ====================== script_name:当前脚本文件名称 ====================
         # ======================    case_name:用例名称  =========================
         host = "https://portal-test.ienjoys.com/login"
-        script_name = "test_py.py"
+        script_name = "test_demo.py"
         case_name = "本地调试"
         env = "local"
     param["script_name"] = script_name

@@ -1,0 +1,196 @@
+Index: We_UI/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"\"\"We_UI URL Configuration\r\n\r\nThe `urlpatterns` list routes URLs to views. For more information please see:\r\n    https://docs.djangoproject.com/en/2.2/topics/http/urls/\r\nExamples:\r\nFunction views\r\n    1. Add an import:  from my_app import views\r\n    2. Add a URL to urlpatterns:  path('', views.home, name='home')\r\nClass-based views\r\n    1. Add an import:  from other_app.views import Home\r\n    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')\r\nIncluding another URLconf\r\n    1. Import the include() function: from django.urls import include, path\r\n    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))\r\n\"\"\"\r\nfrom django.contrib import admin\r\nfrom django.urls import path, re_path\r\nfrom uiApp.views import *\r\n\r\nurlpatterns = [\r\n    path('admin/', admin.site.urls),\r\n    path('home/', home),\r\n    path('save_end/', save_end),\r\n    re_path('del_end/(?P<del_id>.+)/', del_end),\r\n    re_path('testcases/(?P<pro_id>.+)/', testcases),\r\n    re_path('add_case/(?P<pro_id>.+)/', add_case),\r\n    path('edit_case/', edit_case),\r\n    re_path('update_case/(?P<pro_id>.+)/', update_case),\r\n    path('del_case/', del_case),  # 没有待正则的不需要使用re_path\r\n    re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),\r\n    path('update_project/',update_project),\r\n    re_path('upload/(?P<pro_id>.+)/', upload_script)\r\n]\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/We_UI/urls.py b/We_UI/urls.py
+--- a/We_UI/urls.py	(revision 1c91b6709f410ab743e3ebb2286b880e33992c02)
++++ b/We_UI/urls.py	(date 1638404814737)
+@@ -29,5 +29,6 @@
+     path('del_case/', del_case),  # 没有待正则的不需要使用re_path
+     re_path('get_project_msg/(?P<pro_id>.+)/', get_project_msg),
+     path('update_project/',update_project),
+-    re_path('upload/(?P<pro_id>.+)/', upload_script)
++    re_path('upload/(?P<case_id>.+)/', upload_script),
++    re_path('run_script/(?P<case_id>.+)/',run_script)
+ ]
+Index: uiApp/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import json\r\nimport shutil\r\n\r\nfrom django.http import HttpResponse, HttpResponseRedirect\r\nfrom django.shortcuts import render\r\nfrom uiApp.models import *\r\n\r\n# Create your views here.\r\n\r\n\"\"\"\r\n视图逻辑层\r\n\"\"\"\r\n\r\n\r\n# 需要先修改setting.py 才有home.html联想\r\ndef home(request):\r\n    res = {'end': DB_end.objects.all(), 'href': DB_href.objects.all()}\r\n    return render(request, 'home.html', res)\r\n\r\n\r\ndef save_end(request):\r\n    pro_name = request.GET['name']\r\n    pro_host = request.GET['host']\r\n    pro_email = request.GET['email']\r\n    end = DB_end.objects.create(name=pro_name, host=pro_host, email=pro_email)\r\n    base_path = os.path.dirname(os.path.abspath(__file__))\r\n    demo_path = os.path.join(base_path, r\"my_client/demo_client\")\r\n    new_client = os.path.join(base_path, r\"my_client/client_\" + str(end.id))\r\n    shutil.copytree(demo_path, new_client)\r\n    return HttpResponse(\"\")\r\n\r\n\r\ndef del_end(request, del_id):\r\n    DB_end.objects.filter(id=del_id).delete()\r\n    return HttpResponseRedirect(\"/home/\")\r\n\r\n\r\ndef testcases(request, pro_id):\r\n    cases = DB_cases.objects.filter(pro_id=pro_id)\r\n    project = list(DB_end.objects.filter(id=pro_id))[0]\r\n    param = {\"cases\": cases, \"project\": project}\r\n    return render(request, 'case.html', param)\r\n\r\n\r\ndef add_case(request, pro_id):\r\n    print(\"+++++++++++\")\r\n    is_monitor = False\r\n    if request.GET['is_monitor'] == \"True\":\r\n        is_monitor = True\r\n\r\n    is_threads = False\r\n    if request.GET['is_monitor'] == \"True\":\r\n        is_monitor = True\r\n\r\n    DB_cases.objects.create(pro_id=pro_id, name=request.GET['case_name'], retry_count=request.GET['retry_count'],\r\n                            is_monitor=is_monitor, is_threads=is_threads, case_type=request.GET['case_type'])\r\n\r\n    return HttpResponseRedirect('/testcases/' + pro_id + '/')\r\n\r\n\r\ndef edit_case(request):\r\n    case_id = request.GET['id']\r\n    case = list(DB_cases.objects.filter(id=case_id).values())[0]\r\n    return HttpResponse(json.dumps(case), content_type=\"application/json\")\r\n\r\n\r\ndef update_case(request, pro_id):\r\n    is_monitor = False\r\n    if request.GET['is_monitor'] == \"True\":\r\n        is_monitor = True\r\n\r\n    is_threads = False\r\n    if request.GET['is_monitor'] == \"True\":\r\n        is_monitor = True\r\n    case_id = request.GET['case_id']\r\n\r\n    DB_cases.objects.filter(id=case_id).update(name=request.GET['case_name'], retry_count=request.GET['retry_count'],\r\n                                               is_monitor=is_monitor, is_threads=is_threads,\r\n                                               case_type=request.GET['case_type'])\r\n    return HttpResponseRedirect('/testcases/' + pro_id + '/')\r\n\r\n\r\n# 上传脚本\r\ndef upload_script(request, case_id):\r\n    print(\"++++++++++++\")\r\n    # 拿到端id\r\n    pro_id = DB_end.objects.filter(id=case_id)[0].duan_id\r\n    # 获取到上传的脚本\r\n    my_file = request.FILES.get(\"fileUpload\", None)\r\n    if not my_file:\r\n        return HttpResponseRedirect('/testcases/%s/' % pro_id)\r\n    file_name = str(my_file)\r\n    fp = open('MyClient/client_%s/cases/%s' % (pro_id, file_name), 'wb+')\r\n    for i in my_file.chunks():\r\n        fp.write(i)\r\n    fp.close()\r\n    # 更新用例的数据库py字端\r\n    DB_cases.objects.filter(id=case_id).update(py=file_name)\r\n    # 返回\r\n    return HttpResponseRedirect('/testcases/%s/' % pro_id)\r\n\r\n\r\ndef del_case(request):\r\n    case_id = request.GET['case_id']\r\n    pro_id = request.GET['pro_id']\r\n    DB_cases.objects.filter(id=case_id).delete()\r\n\r\n    return HttpResponseRedirect('/testcases/' + pro_id + '/')\r\n\r\n\r\n# 获取项目信息\r\ndef get_project_msg(request, pro_id):\r\n    pro_msg = list(DB_end.objects.filter(id=pro_id).values())[0]\r\n    return HttpResponse(json.dumps(pro_msg), content_type=\"application/json\")\r\n\r\n\r\n# 编辑项目\r\ndef update_project(request):\r\n    DB_end.objects.filter(id=request.GET['pro_id']).update(name=request.GET['pro_name'], host=request.GET['pro_host'],\r\n                                                           check_time=request.GET['check_time'],\r\n                                                           phone=request.GET['phone'], email=request.GET['email'],\r\n                                                           dingtalk=request.GET['dingtalk'],\r\n                                                           max_threads=request.GET['max_threads'], )\r\n    return HttpResponseRedirect(\"/home/\")\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/uiApp/views.py b/uiApp/views.py
+--- a/uiApp/views.py	(revision 1c91b6709f410ab743e3ebb2286b880e33992c02)
++++ b/uiApp/views.py	(date 1638404814848)
+@@ -1,5 +1,6 @@
+ import json
+ import shutil
++import subprocess
+ 
+ from django.http import HttpResponse, HttpResponseRedirect
+ from django.shortcuts import render
+@@ -43,7 +44,6 @@
+ 
+ 
+ def add_case(request, pro_id):
+-    print("+++++++++++")
+     is_monitor = False
+     if request.GET['is_monitor'] == "True":
+         is_monitor = True
+@@ -77,25 +77,26 @@
+     DB_cases.objects.filter(id=case_id).update(name=request.GET['case_name'], retry_count=request.GET['retry_count'],
+                                                is_monitor=is_monitor, is_threads=is_threads,
+                                                case_type=request.GET['case_type'])
+-    return HttpResponseRedirect('/testcases/' + pro_id + '/')
++    return HttpResponse('')
+ 
+ 
+ # 上传脚本
+ def upload_script(request, case_id):
+-    print("++++++++++++")
+     # 拿到端id
+-    pro_id = DB_end.objects.filter(id=case_id)[0].duan_id
++    pro_id = DB_cases.objects.filter(id=case_id)[0].pro_id
+     # 获取到上传的脚本
+-    my_file = request.FILES.get("fileUpload", None)
++    my_file = request.FILES.get("script_file", None)
++    # 如果文件为空则直接返回
+     if not my_file:
+-        return HttpResponseRedirect('/testcases/%s/' % pro_id)
++        return HttpResponseRedirect('/testcases/' + pro_id + '/')
++    # 获取文件名称
+     file_name = str(my_file)
+-    fp = open('MyClient/client_%s/cases/%s' % (pro_id, file_name), 'wb+')
+-    for i in my_file.chunks():
+-        fp.write(i)
+-    fp.close()
+-    # 更新用例的数据库py字端
+-    DB_cases.objects.filter(id=case_id).update(py=file_name)
++    # 打开本地文件
++    with open("uiApp/my_client/client_%s/case/%s" % (pro_id, file_name), 'wb') as file:
++        for content in my_file.chunks():
++            file.write(content)
++    # 将文件名称存到数据库
++    DB_cases.objects.filter(id=case_id).update(script=file_name)
+     # 返回
+     return HttpResponseRedirect('/testcases/%s/' % pro_id)
+ 
+@@ -108,6 +109,20 @@
+     return HttpResponseRedirect('/testcases/' + pro_id + '/')
+ 
+ 
++# 运行脚本
++def run_script(request,case_id):
++    print("+++++")
++    case = DB_cases.objects.filter(id=case_id)[0]
++    pro_id = case.pro_id
++    script_name = case.script
++    # 判断是否未上传脚本文件
++    if script_name in ['',' ',None,'None']:
++        return HttpResponse('Error')
++    # 执行py文件
++    subprocess.call('python uiApp/my_client/client_%s/case/%s' % (pro_id, script_name),shell=True)
++    return HttpResponse('Success')
++
++
+ # 获取项目信息
+ def get_project_msg(request, pro_id):
+     pro_msg = list(DB_end.objects.filter(id=pro_id).values())[0]
+Index: uiApp/templates/case.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <title>case_list</title>\r\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"/static/bootstrap-3.4.1-dist/css/bootstrap.css\">\r\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"/static/bootstrap-3.4.1-dist/css/bootstrap-theme.css\">\r\n</head>\r\n\r\n<body>\r\n\r\n    {% include 'new_menu.html' %}\r\n\r\n    <div class=\"container\">\r\n        <div class=\"row clearfix\">\r\n            <div class=\"col-md-12 column\">\r\n                <h3 class=\"text-center\">\r\n                    {{ project.name }}的测试用例\r\n                </h3>\r\n                <div align=\"right\"><button class=\"btn btn-primary btn-sm\" onclick='javascript:document.getElementById(\"add_case_form\").style.display=\"block\"'>添加用例</button></div>\r\n                <table class=\"table table-bordered\">\r\n                    <thead style=\"background-color: lightskyblue\">\r\n                        <tr>\r\n                            <th>\r\n                                编号\r\n                            </th>\r\n                            <th>\r\n                                名称\r\n                            </th>\r\n                            <th>\r\n                                是否监控\r\n                            </th>\r\n                            <th>\r\n                                是否并发\r\n                            </th>\r\n                            <th>\r\n                                操作\r\n                            </th>\r\n                        </tr>\r\n                    </thead>\r\n                    <tbody>\r\n\r\n                        {% for case in cases %}\r\n                            <tr class=\"error\">\r\n                                <td>\r\n                                    {{ case.id }}\r\n                                </td>\r\n                                <td>\r\n                                    {{ case.name }}\r\n                                </td>\r\n                                <td>\r\n                                    {{ case.is_monitor }}\r\n                                </td>\r\n                                <td>\r\n                                    {{ case.is_threads }}\r\n                                </td>\r\n                                <td width=\"25%\">\r\n                                    <button class=\"btn btn-sm btn-primary\">执行</button> &nbsp\r\n                                    <button onclick=\"edit_case({{ case.id }})\" class=\"btn btn-sm btn-primary\">编辑</button> &nbsp\r\n                                    <button class=\"btn btn-sm btn-primary\">报告</button> &nbsp\r\n                                    <button onclick=\"del_case({{ case.id}},{{ project.id }})\" type=\"button\" class=\"btn btn-sm btn-danger\">删除</button>\r\n                                </td>\r\n                            </tr>\r\n                        {% endfor %}\r\n                    </tbody>\r\n                </table>\r\n               </table>\r\n                <form id=\"add_case_form\" class=\"form-horizontal\" role=\"form\"\r\n                      style=\"position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;\r\n                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center\" >\r\n                    <div class=\"form-group\"  style=\"margin-left: 40px;margin-top: 40px\">\r\n                         <label class=\"col-sm-2 control-label\">用例名称</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"case_name\" type=\"text\" class=\"form-control\" placeholder=\"用例名称\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label class=\"col-sm-2 control-label\">用例类型</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"case_type\" type=\"text\" class=\"form-control\" placeholder=\"用例类型\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label class=\"col-sm-2 control-label\">重试次数</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"retry_count\" type=\"text\" class=\"form-control\" placeholder=\"重试次数\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label  class=\"col-sm-2 control-label\">是否监控</label>\r\n                        <div class=\"input-group\">\r\n                            <label style=\"width: 100px;margin-left: 30px\">\r\n                                <input id=\"is_monitor_true\" type=\"radio\" name=\"is_monitor_radio\" value=\"True\">\r\n                                <span style=\"font-size: medium\">是</span>\r\n                            </label>\r\n                            <label style=\"width: 100px\">\r\n                                <input id=\"is_monitor_false\" type=\"radio\"  name=\"is_monitor_radio\" value=\"False\">\r\n                                <span style=\"font-size: medium\">否</span>\r\n                            </label>\r\n\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label  class=\"col-sm-2 control-label\">是否并发</label>\r\n                        <div class=\"input-group\">\r\n                            <label style=\"width: 100px;margin-left: 30px\">\r\n                                <input id=\"is_threads_true\" type=\"radio\"  name=\"is_threads_radio\" value=\"True\" >\r\n                                <span style=\"font-size: medium\">是</span>\r\n                            </label>\r\n                            <label style=\"width: 100px\">\r\n                                <input  id=\"is_threads_false\" type=\"radio\"  name=\"is_threads_radio\" value=\"False\">\r\n                                <span style=\"font-size: medium\">否</span>\r\n                            </label>\r\n\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"display: none\" style=\"margin-left: 40px;\">\r\n                        <label class=\"col-sm-2 control-label\">id</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"case_id\" type=\"text\" class=\"form-control\"  aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <div class=\"col-sm-offset-2 col-sm-10\">\r\n                             <button onclick=\"add_case({{ project.id }})\" type=\"submit\" class=\"btn btn-default\">确定</button>\r\n                            <button onclick=\"javascript:document.getElementById('add_case_form').style.display='none'\" type=\"submit\" class=\"btn btn-default\">取消</button>\r\n                        </div>\r\n                    </div>\r\n                </form>\r\n\r\n                <form id=\"edit_case_form\"class=\"form-horizontal\" role=\"form\"\r\n                      style=\"position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;\r\n                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center\" >\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;margin-top: 40px\">\r\n                         <label class=\"col-sm-2 control-label\">用例名称</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"edit_case_name\" type=\"text\" class=\"form-control\" placeholder=\"用例名称\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label class=\"col-sm-2 control-label\">用例类型</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"edit_case_type\" type=\"text\" class=\"form-control\" placeholder=\"用例类型\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label class=\"col-sm-2 control-label\">重试次数</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"edit_retry_count\" type=\"text\" class=\"form-control\" placeholder=\"重试次数\" aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label  class=\"col-sm-2 control-label\">是否监控</label>\r\n                        <div class=\"input-group\">\r\n                            <label style=\"width: 100px;margin-left: 30px\">\r\n                                <input id=\"edit_is_monitor_true\" type=\"radio\" name=\"edit_is_monitor_radio\" value=\"True\">\r\n                                <span style=\"font-size: medium\">是</span>\r\n                            </label>\r\n                            <label style=\"width: 100px\">\r\n                                <input id=\"edit_is_monitor_false\" type=\"radio\"  name=\"edit_is_monitor_radio\" value=\"False\">\r\n                                <span style=\"font-size: medium\">否</span>\r\n                            </label>\r\n\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\" style=\"margin-left: 40px;\">\r\n                        <label  class=\"col-sm-2 control-label\">是否并发</label>\r\n                        <div class=\"input-group\">\r\n                            <label style=\"width: 100px;margin-left: 30px\">\r\n                                <input id=\"edit_is_threads_true\" type=\"radio\"  name=\"edit_is_threads_radio\" value=\"True\" >\r\n                                <span style=\"font-size: medium\">是</span>\r\n                            </label>\r\n                            <label style=\"width: 100px\">\r\n                                <input  id=\"edit_is_threads_false\" type=\"radio\"  name=\"edit_is_threads_radio\" value=\"False\">\r\n                                <span style=\"font-size: medium\">否</span>\r\n                            </label>\r\n\r\n                        </div>\r\n                    </div>\r\n\r\n                    <div class=\"form-group\" style=\"display: none\">\r\n                        <label class=\"col-sm-2 control-label\">id</label>\r\n                        <div class=\"input-group\" style=\"width: 300px\">\r\n                          <input id=\"edit_case_id\" type=\"text\" class=\"form-control\"  aria-describedby=\"sizing-addon2\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <div class=\"col-sm-offset-2 col-sm-10\">\r\n                             <button onclick=\"edit_case_confirm({{ project.id }})\" type=\"submit\" class=\"btn btn-default\">确定</button>\r\n                            <button onclick=\"javascript:document.getElementById('edit_case_form').style.display='none'\" type=\"submit\" class=\"btn btn-default\">取消</button>\r\n                        </div>\r\n                    </div>\r\n                </form>\r\n            </div>\r\n        </div>\r\n\r\n\r\n\r\n    </div>\r\n    <script>\r\n        function add_case(pro_id) {\r\n            const case_name = document.getElementById(\"case_name\").value;\r\n            const case_type = document.getElementById(\"case_type\").value;\r\n            const retry_count = document.getElementById(\"retry_count\").value;\r\n            const is_monitor = $(':radio[name=\"is_monitor_radio\"]:checked').val();\r\n            const is_threads = $(':radio[name=\"is_threads_radio\"]:checked').val();\r\n            const case_id = document.getElementById(\"case_id\").value;\r\n            $.get(\r\n                '/add_case/'+pro_id+'/',\r\n                {\r\n                    \"case_name\":case_name,\r\n                    \"case_type\":case_type,\r\n                    \"retry_count\":retry_count,\r\n                    \"is_monitor\":is_monitor,\r\n                    \"is_threads\":is_threads,\r\n                    \"case_id\":case_id\r\n                },function (ret) {\r\n                    document.location.reload()\r\n                }\r\n\r\n            )\r\n        }\r\n\r\n        edit_case = function (id){\r\n\r\n            $.get(\r\n                '/edit_case/',\r\n                {\"id\":id},\r\n                function (ret){\r\n\r\n                    document.getElementById(\"edit_case_form\").style.display=\"block\";\r\n                    document.getElementById(\"edit_case_name\").value = ret.name;\r\n                    document.getElementById(\"edit_case_type\").value = ret.case_type;\r\n                    document.getElementById(\"edit_retry_count\").value = ret.retry_count;\r\n                    document.getElementById(\"edit_is_monitor_\"+ret.is_monitor).checked=\"checked\";\r\n                    document.getElementById(\"edit_is_threads_\"+ret.is_monitor).checked=\"checked\";\r\n                    document.getElementById(\"edit_case_id\").value = ret.id;\r\n                }\r\n            )\r\n        }\r\n\r\n        edit_case_confirm = function(pro_id){\r\n            const case_name = document.getElementById(\"edit_case_name\").value;\r\n            const case_type = document.getElementById(\"edit_case_type\").value;\r\n            const retry_count = document.getElementById(\"edit_retry_count\").value;\r\n            const is_monitor = $(':radio[name=\"edit_is_monitor_radio\"]:checked').val();\r\n            const is_threads = $(':radio[name=\"edit_is_threads_radio\"]:checked').val();\r\n            const case_id = document.getElementById(\"edit_case_id\").value;\r\n            $.get(\r\n                '/update_case/'+pro_id+'/',\r\n                {\r\n                    \"case_name\":case_name,\r\n                    \"case_type\":case_type,\r\n                    \"retry_count\":retry_count,\r\n                    \"is_monitor\":is_monitor,\r\n                    \"is_threads\":is_threads,\r\n                    \"case_id\":case_id\r\n                },function (ret) {\r\n                    document.location.reload()\r\n                }\r\n\r\n            )\r\n        }\r\n\r\n        del_case = function (case_id,pro_id) {\r\n            $.get(\r\n                '/del_case/',\r\n                {\"case_id\":case_id,\"pro_id\":pro_id},\r\n                function (ret) {\r\n                    document.location.reload()\r\n                }\r\n            )\r\n        }\r\n    </script>\r\n\r\n\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/uiApp/templates/case.html b/uiApp/templates/case.html
+--- a/uiApp/templates/case.html	(revision 1c91b6709f410ab743e3ebb2286b880e33992c02)
++++ b/uiApp/templates/case.html	(date 1638404814847)
+@@ -55,7 +55,7 @@
+                                     {{ case.is_threads }}
+                                 </td>
+                                 <td width="25%">
+-                                    <button class="btn btn-sm btn-primary">执行</button> &nbsp
++                                    <button onclick="run_case({{ case.id }})" id="run_btn" class="btn btn-sm btn-primary">执行</button> &nbsp
+                                     <button onclick="edit_case({{ case.id }})" class="btn btn-sm btn-primary">编辑</button> &nbsp
+                                     <button class="btn btn-sm btn-primary">报告</button> &nbsp
+                                     <button onclick="del_case({{ case.id}},{{ project.id }})" type="button" class="btn btn-sm btn-danger">删除</button>
+@@ -130,7 +130,7 @@
+ 
+                 <form id="edit_case_form"class="form-horizontal" role="form"
+                       style="position: absolute;top: 100px;width: 600px ;background-color: #ffffff;align-content: center;
+-                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" >
++                      margin-left: 300px;display: none;box-shadow: 4px 4px 6px;text-align: center" enctype="multipart/form-data" action="" method="post" >
+                     <div class="form-group" style="margin-left: 40px;margin-top: 40px">
+                          <label class="col-sm-2 control-label">用例名称</label>
+                         <div class="input-group" style="width: 300px">
+@@ -177,7 +177,13 @@
+ 
+                         </div>
+                     </div>
+-
++                    <div class="form-group" style="margin-left: 40px;" >
++                        <label class="col-sm-2 control-label">上传脚本</label>
++                        <div class="input-group" style="width: 300px" >
++                          <span id="script_name"></span>
++                          <span><input id="edit_py_script" type="file" name="script_file"></span>
++                        </div>
++                    </div>
+                     <div class="form-group" style="display: none">
+                         <label class="col-sm-2 control-label">id</label>
+                         <div class="input-group" style="width: 300px">
+@@ -227,7 +233,7 @@
+                 '/edit_case/',
+                 {"id":id},
+                 function (ret){
+-
++                    console.log(ret.script)
+                     document.getElementById("edit_case_form").style.display="block";
+                     document.getElementById("edit_case_name").value = ret.name;
+                     document.getElementById("edit_case_type").value = ret.case_type;
+@@ -235,6 +241,8 @@
+                     document.getElementById("edit_is_monitor_"+ret.is_monitor).checked="checked";
+                     document.getElementById("edit_is_threads_"+ret.is_monitor).checked="checked";
+                     document.getElementById("edit_case_id").value = ret.id;
++                    document.getElementById("script_name").innerText = ret.script;
++                    document.getElementById("edit_case_form").action="/upload/"+ret.id+"/";
+                 }
+             )
+         }
+@@ -256,7 +264,8 @@
+                     "is_threads":is_threads,
+                     "case_id":case_id
+                 },function (ret) {
+-                    document.location.reload()
++                    const edit_form = document.getElementById("edit_case_form");
++                    edit_form.submit();
+                 }
+ 
+             )
+@@ -271,6 +280,22 @@
+                 }
+             )
+         }
++
++        run_case = function (case_id) {
++            document.getElementById("run_btn").innerText = "执行中.."
++            $.get(
++                '/run_script/'+case_id+'/',
++                {},
++                function (ret) {
++                    if (ret != 'Error'){
++                        alert('执行成功');
++                    }else{
++                        alert('请先上传自动化脚本');
++                    }
++                    document.getElementById("run_btn").innerText = "执行"
++                }
++            )
++        }
+     </script>
+ 
+ 
