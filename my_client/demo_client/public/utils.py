@@ -4,7 +4,8 @@ import unittest
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 operation = platform.system()
 if operation == 'Windows':
     file_path = str(__file__).split("\\")[-3]
@@ -43,44 +44,72 @@ def util_run_with_report(self, param: dict):
 
 def util_get_ele(self, loc):
     """
-    todo: 根据定位符获取元素并返回
+    根据定位符获取元素并返回
     """
+    return self.driver.find_element(*loc)
+
+
+def util_click_ele(self, loc):
+    util_get_ele(self, loc).click()
+
+
+def util_send_key(self, loc, value):
+    util_get_ele(self, loc).send_keys(value)
 
 
 def util_switch_to_frame(self, frame_loc):
     """
-    todo: 切换到对应的iframe  可传入对应frame_element/frame_id/frame_index
+    切换到对应的iframe  可传入对应frame_element/frame_id/frame_index
     """
+    self.driver.switch_to.frame(frame_reference=frame_loc)
 
 
-def util_switch_to_window(self, **kwargs):
+def util_switch_to_parent_frame(self, frame_loc):
     """
-    todo: 切换到对应的iframe  可传入对应index/tittle
+    切换到对应的iframe  可传入对应frame_element/frame_id/frame_index
     """
+    self.driver.switch_to.parent_frame()
 
+
+def util_switch_to_window(self, tittle):
+    """
+    切换到对应的window
+    """
+    handles = webdriver.Chrome().window_handles
+    for handle in handles:
+        if webdriver.Chrome().title != tittle:
+            webdriver.Chrome().switch_to.window(handle)
+        else:
+            break
 
 def util_wait_element_exist(self, loc):
     """
-    todo: 显示等待到元素存在
+    显示等待到元素存在
     """
+    return WebDriverWait(self.driver, timeout=10).until(
+        ec.visibility_of_element_located(loc))
+
 
 
 def util_wait_element_clickable(self, loc):
     """
-    todo: 显示等待到元素可点击
+    显示等待到元素可点击
     """
-
+    return WebDriverWait(self.driver, timeout=10).until(
+        ec.element_to_be_clickable(loc))
 
 def util_get_element_text(self, loc):
     """
-    todo: 获取元素文本
+    获取元素文本
     """
+    return self.driver.find_element(*loc).text()
 
 
 def util_get_element_attribute(self, loc, attr_name):
     """
-    todo: 获取元素属性
+    获取元素属性
     """
+    return self.driver.find_element(*loc).get_attribute(attr_name)
 
 
 # 通过获取定位器接口获取定位器  并进行定位返回元素
