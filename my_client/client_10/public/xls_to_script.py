@@ -6,6 +6,9 @@ import unittest
 import platform
 import sys
 
+from selenium import webdriver
+from selenium.webdriver.common import by
+from selenium.webdriver.common.by import By
 
 operation = platform.system()
 if operation == 'Windows':
@@ -46,16 +49,48 @@ class Test(unittest.TestCase):
         '这里是用例描述'
         # 获取用例步骤 遍历判断
         steps = case_date['case_steps']
-        print('开始执行用例')
+        assert_content = {}
         for step in steps:
-            element = util_get_element(self, step['locator'])
             action = step['action']
             content = step['content']
+            variable = step['variable']
+
+            res = util_get_locator(self, step['locator'])
+            locator = ()
+            element = ''
+
+            if res is not None:
+                locator = res['locator']
+                index = res['index']
+                if 'assert_exist' in action or '断言相等' in action:
+                    is_exist = True
+                    try:
+                        self.driver.find_elements(*locator)[index]
+                    except:
+                        is_exist = False
+                    self.assertTrue(is_exist)
+                    continue
+                try:
+                    element = self.driver.find_elements(*locator)[index]
+                except Exception as e:
+                    element = auto_get_element(self.driver, res)
 
             if 'send_key' == action or '输入' == action:
                 element.send_keys(content)
             elif 'click' in action or '点击' in action:
                 element.click()
+            elif 'get_text' in action or '获取文本' in action:
+                assert_content[variable] = element.get_attribute('innerText')
+            elif 'get_attr' in action or '获取属性' in action:
+                assert_content[variable] = element.get_attribute(content)
+            elif 'assert_contains' in action or '断言包含' in action:
+                print('进行断言')
+                assert_list = str(content).split(',')
+                self.assertIn(assert_list[0], assert_content[assert_list[1]])
+            elif 'assert_equal' in action or '断言相等' in action:
+                print('进行断言')
+                assert_list = str(content).split(',')
+                self.assertEqual(assert_list[0], assert_content[assert_list[1]])
             elif 'sleep' == action or '等待' == action:
                 time.sleep(content)
 
@@ -99,7 +134,8 @@ def read_excel(file_name):
         else:
             # 具体步骤
             step_tmp = {'step': sheet.cell_value(i, 0), 'locator': sheet.cell_value(i, 3),
-                        'action': sheet.cell_value(i, 1), 'content': sheet.cell_value(i, 2)}
+                        'action': sheet.cell_value(i, 1), 'content': sheet.cell_value(i, 2),
+                        'variable': sheet.cell_value(i, 4)}
             case_content['case_steps'].append(step_tmp)
 
     return datas
@@ -121,8 +157,8 @@ if __name__ == '__main__':
         # ======================       host:调试地址      ======================
         # ====================== script_name:当前脚本文件名称 ====================
         # ======================    case_name:用例名称  =========================
-        host = "https://portal-test.ienjoys.com/login"
-        script_name = "test_demo.py"
+        host = "https://www.baidu.com"
+        script_name = "test_py.py"
         case_name = "本地调试"
         env = "local"
     param["script_name"] = script_name

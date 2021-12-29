@@ -101,7 +101,7 @@ def edit_user(request):
 
 
 # 需要先修改setting.py 才有home.html联想
-@login_required()
+@login_required
 def home(request):
     res = {'end': DB_end.objects.all(), 'href': DB_href.objects.all()}
     return render(request, 'home.html', res)
@@ -534,6 +534,23 @@ def upload_public_utils(request, pro_id):
     with open(new_file_name, 'wb+') as f:
         for content in utils_file.chunks():
             f.write(content)
+    return HttpResponseRedirect('/testcases/' + pro_id)
+
+
+# 上传PAGE
+def upload_page(request, pro_id):
+    # 1 获取页面传回来的文件
+    page_file = request.FILES.get('page_file',None)
+    # 2 判断文件是否为空
+    if not page_file:
+        return HttpResponseRedirect('/testcases/' + pro_id)
+    # 3 声明上传文件的完整名称
+    file_name = str(page_file)
+    new_file_name = 'my_client/client_%s/page/%s' % (pro_id,file_name)
+    # 4 读取传回来的文件写到新文件中
+    with open(new_file_name,'wb+') as nf:
+        for content in page_file.chunks():
+            nf.write(content)
     return HttpResponseRedirect('/testcases/' + pro_id)
 
 

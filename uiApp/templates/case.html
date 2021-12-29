@@ -48,6 +48,13 @@
                             </form>
 
                         </li>
+
+                        <li>
+                            <form action="/upload_page/{{ project.id }}" method="post" enctype="multipart/form-data">
+                                <input type="file" name="page_file">
+                                <input type="submit" value="上传page页面方法" >
+                            </form>
+                        </li>
                         <li>
                              <button onclick="look_report_summary({{ project.id }})">查看报告总结</button>
                         </li>

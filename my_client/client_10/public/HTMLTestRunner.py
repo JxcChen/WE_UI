@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import getpass, sys
+import io
 import platform, glob, os, traceback
 
 __author__ = "Wai Yip Tung"
@@ -442,6 +443,8 @@ class _TestResult(TestResult):
         #   stack trace,
         # )
         self.result = []
+        self.outputBuffer = io.StringIO()
+        self.test_start_time = round(time.time(), 2)
 
     def startTest(self, test):
         TestResult.startTest(self, test)

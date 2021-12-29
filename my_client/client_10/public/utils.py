@@ -5,6 +5,8 @@ import unittest
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 operation = platform.system()
 if operation == 'Windows':
@@ -42,14 +44,85 @@ def util_run_with_report(self, param: dict):
         runner.run(unittest.makeSuite(self))
 
 
+def util_get_ele(self, loc):
+    """
+    根据定位符获取元素并返回
+    """
+    return self.driver.find_element(*loc)
+
+
+def util_click_ele(self, loc):
+    util_get_ele(self, loc).click()
+
+
+def util_send_key(self, loc, value):
+    util_get_ele(self, loc).send_keys(value)
+
+
+def util_switch_to_frame(self, frame_loc):
+    """
+    切换到对应的iframe  可传入对应frame_element/frame_id/frame_index
+    """
+    self.driver.switch_to.frame(frame_reference=frame_loc)
+
+
+def util_switch_to_parent_frame(self, frame_loc):
+    """
+    切换到对应的iframe  可传入对应frame_element/frame_id/frame_index
+    """
+    self.driver.switch_to.parent_frame()
+
+
+def util_switch_to_window(self, tittle):
+    """
+    切换到对应的window
+    """
+    handles = webdriver.Chrome().window_handles
+    for handle in handles:
+        if webdriver.Chrome().title != tittle:
+            webdriver.Chrome().switch_to.window(handle)
+        else:
+            break
+
+
+def util_wait_element_exist(self, loc):
+    """
+    显示等待到元素存在
+    """
+    return WebDriverWait(self.driver, timeout=10).until(
+        ec.visibility_of_element_located(loc))
+
+
+def util_wait_element_clickable(self, loc):
+    """
+    显示等待到元素可点击
+    """
+    return WebDriverWait(self.driver, timeout=10).until(
+        ec.element_to_be_clickable(loc))
+
+
+def util_get_element_text(self, loc):
+    """
+    获取元素文本
+    """
+    text = self.driver.find_element(*loc).get_attribute('innerText')
+    return text
+
+
+def util_get_element_attribute(self, loc, attr_name):
+    """
+    获取元素属性
+    """
+    return self.driver.find_element(*loc).get_attribute(attr_name)
+
+
 # 通过获取定位器接口获取定位器  并进行定位返回元素
-def util_get_element(self, loc_id):
+def util_get_locator(self, loc_id):
     if loc_id == '' or loc_id == ' ' or loc_id is None:
         return None
     res = requests.get("http://127.0.0.1:8000/open_get_locator/%s" % int(loc_id)).json()
     loc = res['tmp_value']
     method = res['tmp_method']
-    index = res['index']
     locator = ()
     if 'id' == method:
         locator = (By.ID, loc)
@@ -61,11 +134,8 @@ def util_get_element(self, loc_id):
         locator = (By.XPATH, loc)
     elif 'tag' in method:
         locator = (By.TAG_NAME, loc)
-    try:
-        ele = self.driver.find_elements(*locator)[index]
-    except Exception as e:
-        ele = auto_get_element(self.driver, res)
-    return ele
+    res['locator'] = locator
+    return res
 
 
 def util_retry_case(set_up, teardown, retry_num):
@@ -79,7 +149,7 @@ def util_retry_case(set_up, teardown, retry_num):
     def retry_method(case_method):
         def wrapper(*arg, **args):
             for i in range(retry_num):
-                print('执行第'+str(i+1)+'次')
+                print('执行第' + str(i + 1) + '次')
                 try:
                     res = case_method(**args)
                     return res
